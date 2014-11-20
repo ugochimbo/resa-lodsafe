@@ -1,0 +1,19 @@
+{
+  "name": "resa-lodsafe",
+  "version": "0.0.1",
+  "homepage": "https://github.com/ugochimbo/resa-lodsafe",
+  "authors": [
+    "Ugochukwu Chimbo Ejikeme <ugochimbo@ugochmbo.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "tests"
+  ],
+  "dependencies": {
+    "socket.io-client": "~1.2.0"
+  }
+}
