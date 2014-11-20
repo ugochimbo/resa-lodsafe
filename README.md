@@ -14,7 +14,7 @@ Bower (get by running "npm install -g bower")
  - npm install --save
  
 2. Install bower dependencies (see bower.json)
-- bower update
+ - bower update
 
 3. Configure DBpedia Spotlight endpoint and Twitter API keys:
  - open config.sample.js and fill in the required urls and keys
