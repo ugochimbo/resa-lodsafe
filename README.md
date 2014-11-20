@@ -31,7 +31,7 @@ Bower (get by running "npm install -g bower")
 For debugging just run "gulp"  
 For release run "gulp build" to compile js and css and then run "npm start" (or "./bin/context")  
 
-### Running via Vagrant
+### Running via Vagrant (Recommended)
 
 Assuming you have [vagrant](http://www.vagrantup.com/) installed, you can run ReSA-LodSaFE with few simple commands:  
 
@@ -40,4 +40,4 @@ Assuming you have [vagrant](http://www.vagrantup.com/) installed, you can run Re
 3. Change to workdir with `cd /vagrant`
 4. (optional) Install ReSA-LodSaFE with `npm install`
 5. Run the app with `node app.js`
-7. Open vagrant host on port 8080 in browser and see ReSA-LodSaFE running
+6. Open vagrant host via 5.5.5.5:5555 in browser and see ReSA-LodSaFE running (*see Vagrantfile)
