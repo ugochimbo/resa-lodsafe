@@ -3,32 +3,32 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
 
     <title>Resa-lodsafe by ugochimbo</title>
   </head>
 
   <body>
+
     <header>
-      <div class="inner">
+      <div class="container">
         <h1>Resa-lodsafe</h1>
         <h2>Extension of ReSA to provide LOD-based Disambiguation and Spatial-Filter Extension.</h2>
-        <a href="https://github.com/ugochimbo/resa-lodsafe" class="button"><small>View project on</small> GitHub</a>
+
+        <section id="downloads">
+          <a href="https://github.com/ugochimbo/resa-lodsafe/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/ugochimbo/resa-lodsafe/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/ugochimbo/resa-lodsafe" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
       </div>
     </header>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
+    <div class="container">
+      <section id="main_content">
+        <h1>
 <a id="resa---lodsafe" class="anchor" href="#resa---lodsafe" aria-hidden="true"><span class="octicon octicon-link"></span></a>ReSA - LoDSaFE</h1>
 
 <p>ReSA-LoDSaFE extends ReSA to provide LOD-based disambiguation and a Spatial-Filter Extension</p>
@@ -64,7 +64,25 @@ Bower (get by running "npm install -g bower")</p>
 </ol>
 
 <h3>
-<a id="running" class="anchor" href="#running" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running</h3>
+<a id="running-via-vagrant-recommended" class="anchor" href="#running-via-vagrant-recommended" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running via Vagrant (Recommended)</h3>
+
+<p>Assuming you have <a href="http://www.vagrantup.com/">vagrant</a> installed, you can run ReSA-LodSaFE with few simple commands:  </p>
+
+<ol>
+<li>Execute <code>vagrant up</code> to init &amp; start vagrant environment</li>
+<li>Once ready, connect to vagrant box using <code>vagrant ssh</code>
+</li>
+<li>Change to workdir with <code>cd /vagrant</code>
+</li>
+<li>(optional) Install ReSA-LodSaFE with <code>npm install</code>
+</li>
+<li>Run the app with <code>node app.js</code>
+</li>
+<li>Open vagrant host via 5.5.5.5:5555 in browser and see ReSA-LodSaFE running (*see Vagrantfile)</li>
+</ol>
+
+<h3>
+<a id="running-without-vagrant" class="anchor" href="#running-without-vagrant" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running (Without Vagrant)</h3>
 
 <ol>
 <li>
@@ -84,41 +102,18 @@ Bower (get by running "npm install -g bower")</p>
 </ol>
 
 <h3>
-<a id="running-via-vagrant-recommended" class="anchor" href="#running-via-vagrant-recommended" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running via Vagrant (Recommended)</h3>
+<a id="resa-updateupgrade-notification" class="anchor" href="#resa-updateupgrade-notification" aria-hidden="true"><span class="octicon octicon-link"></span></a>ReSA Update/Upgrade Notification.</h3>
 
-<p>Assuming you have <a href="http://www.vagrantup.com/">vagrant</a> installed, you can run ReSA-LodSaFE with few simple commands:  </p>
+<p>Though ReSA-LodSaFE extends ReSA, the following updates/upgrades were made on ReSA:</p>
 
-<ol>
-<li>Execute <code>vagrant up</code> to init &amp; start vagrant environment</li>
-<li>Once ready, connect to vagrant box using <code>vagrant ssh</code>
-</li>
-<li>Change to workdir with <code>cd /vagrant</code>
-</li>
-<li>(optional) Install ReSA-LodSaFE with <code>npm install</code>
-</li>
-<li>Run the app with <code>node app.js</code>
-</li>
-<li>Open vagrant host via 5.5.5.5:5555 in browser and see ReSA-LodSaFE running (*see Vagrantfile)</li>
-</ol>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/ugochimbo/resa-lodsafe/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/ugochimbo/resa-lodsafe/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/ugochimbo/resa-lodsafe"></a> is maintained by <a href="https://github.com/ugochimbo">ugochimbo</a>.</p>
-
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
+<ul>
+<li>Express upgraded from 3.x to 4.x</li>
+<li>Socket.io (client/server) upgraded from 0.9.11 to ~1.2.0</li>
+<li>nTwitter module (deprecated) replaced with 'twitter' module.</li>
+</ul>
+      </section>
     </div>
 
-  
+    
   </body>
 </html>
