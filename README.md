@@ -1,4 +1,4 @@
-ReSA - LoDSaFE (Extension of ReSA to provide LOD-based disambiguation and a Spatial-Filter Extension)
+ReSA - LoDSaFE
 ====
 ReSA-LoDSaFE extends ReSA to provide LOD-based disambiguation and a Spatial-Filter Extension
 
