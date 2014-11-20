@@ -21,21 +21,29 @@ if(process.argv[2]){
 app.set('port', process.env.PORT || default_port);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
+/*
 app.use(express.logger('dev'));
 //app.use(express.bodyParser());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
+*/
 app.use(require('stylus').middleware(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //We're using bower components so add it to the path to make things easier
-app.use('/components', express.static(path.join(__dirname, 'components')));
-
+app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 // development only
+/*
 if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
+*/
+
+//Catch all Error Function.
+app.use(function(err, req, res, next){
+    console.error(err.message);
+});
 
 //Our only route! Render it with the current watchList
 app.get('/', function(req, res) {
@@ -72,9 +80,10 @@ sockets.sockets.on('connection', function(socket) {
     socket.on('removeAll', function(data) {
         annotator.emptyWatchList();
     });
+    socket.on('error', function(error) {
+        console.log("Error coming from socket!", error.message);
+    });
 });
-
-
 
 
 //Create the server

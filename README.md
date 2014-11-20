@@ -1,21 +1,43 @@
-ReSA (Real-time Semantic Annotation)
+ReSA - LoDSaFE (Extension of ReSA to provide LOD-based disambiguation and a Spatial-Filter Extension)
 ====
-ReSA annotates real-time streams (e.g. Twitter streams) using Linked Data and provides views for real-time text analytics.
-ReSA is an extension of conTEXT platform for lightweight text analytics available at http://context.aksw.org
+ReSA-LoDSaFE extends ReSA to provide LOD-based disambiguation and a Spatial-Filter Extension
 
+### Requirements
 
-How to install it?
-====
-1. install required NodeJS modules:
- - npm install
+Latest Node.js + NPM  
+Latest MongoDB  
+Bower (get by running "npm install -g bower")
 
-2. configure DBpedia Spotlight endpoint and Twitter API keys:
+### Installing
+
+1. Install required NodeJS modules:
+ - npm install --save
+ 
+2. Install bower dependencies (see bower.json)
+- bower update
+
+3. Configure DBpedia Spotlight endpoint and Twitter API keys:
  - open config.sample.js and fill in the required urls and keys
  - save it as config.js
  
+### Running
 
-3. To start NodeJS server:
+1. To start NodeJS server:
  - node app.js [port number (default port is 5555)]
 
-4. Run the web browser
- - http://localhost:5555 
+2. Run the web browser
+ - http://localhost:5555
+ 
+For debugging just run "gulp"  
+For release run "gulp build" to compile js and css and then run "npm start" (or "./bin/context")  
+
+### Running via Vagrant
+
+Assuming you have [vagrant](http://www.vagrantup.com/) installed, you can run ReSA-LodSaFE with few simple commands:  
+
+1. Execute `vagrant up` to init & start vagrant environment
+2. Once ready, connect to vagrant box using `vagrant ssh`
+3. Change to workdir with `cd /vagrant`
+4. (optional) Install ReSA-LodSaFE with `npm install`
+5. Run the app with `node app.js`
+7. Open vagrant host on port 8080 in browser and see ReSA-LodSaFE running

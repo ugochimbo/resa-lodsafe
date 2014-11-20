@@ -1,6 +1,6 @@
-﻿var config = require('./config.js');
+var config = require('./config.js');
 var http = require('http');
-var twitter = require('ntwitter');
+var twitter = require('twitter');
 var io = require('socket.io');
 var _ = require('underscore');
 var path = require('path');
@@ -47,7 +47,7 @@ var start=function(watchSymbols,sockets) {
 // //Tell the twitter API to filter on the watchSymbols
     t.stream('statuses/filter', { track: watchSymbols }, function(stream) {
 
-        //We have a connection. Now watch the 'data' event for incomming tweets.
+        //We have a connection. Now watch the 'data' event for in coming tweets.
         stream.on('data', function(tweet) {
             if(stop_streaming){
                 stopStreaming(stream,sockets);
@@ -60,7 +60,7 @@ var start=function(watchSymbols,sockets) {
             send_data=1;
             var tweet_text=tweet.text;
             //Make sure it was a valid tweet
-            if (tweet_text !== undefined) {
+            /*if (tweet_text !== undefined) {
 
                 spotlight.sendRequest(tweet_text,function(output){
                     console.log('*********************************');
@@ -97,7 +97,7 @@ var start=function(watchSymbols,sockets) {
                         //watchList.current_tweet.date=tweet.created_at;
                     }
                 })
-            }
+            }*/
         });
         //add a threshold to stop service if we got more than 1000 tweets
         if(watchList.tweets_no>1000){
