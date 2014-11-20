@@ -27,9 +27,6 @@ Bower (get by running "npm install -g bower")
 
 2. Run the web browser
  - http://localhost:5555
- 
-For debugging just run "gulp"  
-For release run "gulp build" to compile js and css and then run "npm start" (or "./bin/context")  
 
 ### Running via Vagrant (Recommended)
 
