@@ -40,7 +40,7 @@ Assuming you have [vagrant](http://www.vagrantup.com/) installed, you can run Re
 2. Run the web browser
  - http://localhost:5555
  
- ### ReSA Update/Upgrade Notification.
+### ReSA Update/Upgrade Notification.
  Though ReSA-LodSaFE extends ReSA, the following updates/upgrades were made on ReSA:
  - Express upgraded from 3.x to 4.x
  - Socket.io (client/server) upgraded from 0.9.11 to ~1.2.0
