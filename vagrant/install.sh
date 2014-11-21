@@ -35,7 +35,7 @@ echo "[-->] Installing latest mongodb..."
 sudo apt-get install -y mongodb-10gen
 
 echo "[-->] Installing global npm modules..."
-sudo npm install -g gulp bunyan
+sudo npm install -g bower gulp bunyan
 
 
 echo "[-->] All packages installed!"
