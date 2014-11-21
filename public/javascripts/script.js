@@ -192,7 +192,7 @@
             */
         });
         socket.on('data', function(data) {
-            console.log(data);
+            //console.log(data);
             //console.log(data.recent_tweets);
             var one_node_already_inserted=0;
             var total = data.total;
