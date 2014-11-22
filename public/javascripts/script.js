@@ -276,8 +276,6 @@
         socket2.emit('startA', {keywords:terms.split(',')});
     }
 
-    var process_button = $('#process_btn');
-
     function stopAnalyzing(){
         $('#reset_btn').addClass('animated bounceIn');
         var socket2 = io.connect(window.location.hostname);
@@ -288,12 +286,16 @@
             $('#tweets').empty();
         },1000);
 
+        var process_button = $('#process_btn');
+
         process_button.find('i').removeClass('glyphicon-pause').addClass('glyphicon-play');
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
     }
     function pauseAnalyzing(){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('pauseA', {});
+
+        var process_button = $('#process_btn');
 
         process_button.find('i').removeClass('glyphicon-pause').addClass('glyphicon-play');
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
@@ -303,6 +305,7 @@
         socket2.emit('removeAll', {});
     }
     function establishPauseMode(){
+        var process_button = $('#process_btn');
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
         process_button.removeClass('btn-success').addClass('btn-warning').attr('title','pause').addClass('animated bounceIn').attr('onclick','pauseAnalyzing();');
     }
