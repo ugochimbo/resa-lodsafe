@@ -14,7 +14,7 @@
             }else{
                 return '#fdf8ca';
             }
-        }
+        };
         //clustering point
         var cluster_padding_x=width/4;
         var cluster_padding_y=height/4;
@@ -29,7 +29,7 @@
             }else{
                 return foci[3];
             }
-        }
+        };
         /*
          var category_no = d3.scale.ordinal()
          .domain(["Person", "Place", "Organization"])
@@ -45,7 +45,7 @@
             }else{
                 return 0;
             }
-        }
+        };
         var force = d3.layout.force()
             .size([width, height])
             .nodes([{}]) // initialize with a single node
@@ -112,7 +112,7 @@
                     //.transition()
                  //  .duration(300)
                     .attr("style","font-size:1.4em;")
-                     .attr("opacity", 0.9)
+                     .attr("opacity", 0.9);
                 d3.select(this).classed('node-selected',true);
             }else{
                 d3.select(this).classed('node-selected',false);
@@ -144,7 +144,7 @@
                 .on("mouseover", mouseover)
                 .on("mouseout", mouseout)
                 .on("mousedown", mousedown)
-                .call(force.drag)
+                .call(force.drag);
             var c_added=nn.append("circle")
                 .attr("id",function(d){return d.slug_text;})
                 .attr("class", "node-circle")
@@ -163,7 +163,7 @@
                 .attr("class", "node-text")
                 .attr("style","font-size:1.4em;")
                 // .attr("style","font-size:5px;")
-                .text(function(d){return d.name;})
+                .text(function(d){return d.name;});
             // .transition()
             // .duration(500)
             // .attr("style","font-size:1.4em;")
@@ -214,19 +214,19 @@
             }
             $('#hashtag').html(' (#'+data.search_for.join()+')').addClass("animated bounceIn");
             $('.tweet').removeClass('animated').removeClass('flash');
-            $('.r_entity').css('background-color','')
+            $('.r_entity').css('background-color','');
             $.each(data.recent_tweets,function(i,v){
                 $('#tweets').prepend('<div class="tweet animated slideInDown recent"><div class="tweet-date">'+v.date+'</div>'+v.text+'</div>').linkify({target: '_blank'});
             });
             $('.recent .r_entity').mouseover(function(){
-                $(this).css('background-color','orange')
+                $(this).css('background-color','orange');
                 var id=convertToSlug($(this).text());
                 d3.select("#bubblecloud svg").selectAll('#t_'+id).attr('opacity',0.9);
             }).mouseout(function(){
-                    $(this).css('background-color','')
+                    $(this).css('background-color','');
                     var id=convertToSlug($(this).text());
                     d3.select("#bubblecloud svg").selectAll('#t_'+id).attr('opacity',0);
-                })
+                });
             for (var key in data.symbols) {
                 var val = data.symbols[key].count / total;
                 if (isNaN(val)) {
@@ -264,7 +264,7 @@
             glob_paused=1;
             pauseAnalyzing();
         });
-    })
+    });
     function startAnalyzing(){
         glob_paused=0;
         var terms=$('#keyword').val();
@@ -275,29 +275,34 @@
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('startA', {keywords:terms.split(',')});
     }
+
+    var process_button = $('#process_btn');
+
     function stopAnalyzing(){
-        $('#reset_btn').addClass('animated bounceIn')
+        $('#reset_btn').addClass('animated bounceIn');
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('stopA', {});
         setTimeout(function(){
             socket2.emit('removeAll', {});
             d3.select("#bubblecloud svg").selectAll('g').remove();
             $('#tweets').empty();
-        },1000)
-        $('#process_btn i').removeClass('glyphicon-pause').addClass('glyphicon-play');
-        $('#process_btn').removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
+        },1000);
+
+        process_button.find('i').removeClass('glyphicon-pause').addClass('glyphicon-play');
+        process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
     }
     function pauseAnalyzing(){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('pauseA', {});
-        $('#process_btn i').removeClass('glyphicon-pause').addClass('glyphicon-play');
-        $('#process_btn').removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
+
+        process_button.find('i').removeClass('glyphicon-pause').addClass('glyphicon-play');
+        process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
     }
     function removeAllEntities(){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('removeAll', {});
     }
     function establishPauseMode(){
-        $('#process_btn i').removeClass('glyphicon-play').addClass('glyphicon-pause');
-        $('#process_btn').removeClass('btn-success').addClass('btn-warning').attr('title','pause').addClass('animated bounceIn').attr('onclick','pauseAnalyzing();');
+        process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
+        process_button.removeClass('btn-success').addClass('btn-warning').attr('title','pause').addClass('animated bounceIn').attr('onclick','pauseAnalyzing();');
     }
