@@ -8,16 +8,18 @@ exports.sendRequest=function(input, cb) {
         'confidence': 0,
         'support' : 20
     });
-    var options={
-        host:config.get['spotlight_host'],
-        path:config.get['spotlight_path'],
-        method:'POST',
+    var options = {
+        hostname: config.get['spotlight_host'],
+        port: config.get['spotlight_port'],
+        path: config.get['spotlight_path'],
+        method: 'POST',
         headers:{
             "Accept": "application/json",
             "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
             'Content-Length': post_data.length
         }
     };
+
     // Set up the request
     var post_req = http.request(options, function(res) {
         res.setEncoding('utf8');
@@ -25,12 +27,15 @@ exports.sendRequest=function(input, cb) {
         res.on('data', function (chunk) {
             body += chunk;
         });
+        res.on('error', function(e){
+            console.log(e.message);
+        });
         res.on('end', function () {
-            //console.log(body);
+            var output;
             try{
-                var output=JSON.parse(body);
+                output = JSON.parse(body);
             }catch(e){
-                var output={};
+                output={};
             }
             cb(output);
         });
@@ -38,5 +43,4 @@ exports.sendRequest=function(input, cb) {
     // post the data
     post_req.write(post_data);
     post_req.end();
-
-}
+};
