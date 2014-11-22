@@ -23,7 +23,7 @@ var watchList = {
 //You will need to get your own key. Don't worry, it's free. But I cannot provide you one
 //since it will instantiate a connection on my behalf and will drop all other streaming connections.
 //Check out: https://dev.twitter.com/
-var t = new twitter({
+var _twitter = new twitter({
     consumer_key: config.get['twitter_consumer_key'],
     consumer_secret: config.get['twitter_consumer_secret'],
     access_token_key: config.get['twitter_access_token_key'],
@@ -43,7 +43,6 @@ var pause=function(){
 };
 
 var start=function(watchSymbols,sockets) {
-    console.log("About starting watch for : " + watchSymbols);
     stop_streaming=0;
     pause_streaming=0;
     var send_data=0;
@@ -53,7 +52,7 @@ var start=function(watchSymbols,sockets) {
     watchList.search_for=watchSymbols;
 
     //Tell the twitter API to filter on the watchSymbols
-    t.stream('filter', {track: watchSymbols}, function(stream) {
+    _twitter.stream('filter', {track: watchSymbols}, function(stream) {
         stream.on('data', function(tweet) {
             //console.log(util.inspect(data));
             if(stop_streaming){
@@ -110,16 +109,15 @@ var start=function(watchSymbols,sockets) {
         if(watchList.tweets_no>1000){
             stopStreaming(stream,sockets);
         }
+        //acts as a buffer to slow down emiting results
+        setInterval(function(){
+            if(send_data){
+                sockets.sockets.emit('data', watchList);
+                watchList.recent_tweets=[];
+                send_data=0;
+            }
+        },1500);
     });
-
-    //acts as a buffer to slow down emiting results
-    setInterval(function(){
-        if(send_data){
-            sockets.sockets.emit('data', watchList);
-            watchList.recent_tweets=[];
-            send_data=0;
-        }
-    },1500);
     /*
      //filter out results for scalability
      setInterval(function(){
