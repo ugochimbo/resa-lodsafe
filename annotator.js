@@ -22,7 +22,7 @@ var watchList = {
 //Instantiate the twitter component
 //You will need to get your own key. Don't worry, it's free. But I cannot provide you one
 //since it will instantiate a connection on my behalf and will drop all other streaming connections.
-//Check out: https://dev.twitter.com/
+//Check out: https://dev.twitter.com/1
 var _twitter = new twitter({
     consumer_key: config.get['twitter_consumer_key'],
     consumer_secret: config.get['twitter_consumer_secret'],
@@ -51,7 +51,6 @@ var start = function (watchSymbols, sockets) {
     }
     watchList.search_for = watchSymbols;
 
-    //Tell the twitter API to filter on the watchSymbols
     _twitter.stream('filter', {track: watchSymbols}, function (stream) {
         stream.on('data', function (tweet) {
             if (stop_streaming) {
@@ -70,37 +69,18 @@ var start = function (watchSymbols, sockets) {
                     /*console.log('*********************************');
                     console.log(tweet_text);*/
                     if (output.Resources != undefined) {
+
                         //store tweets on DB
-                        db.get('tweetscollection').insert({
-                            "tweet_id": tweet.id,
-                            "user_name": tweet.user.screen_name,
-                            "created_at": tweet.created_at,
-                            "place": tweet.place,
-                            "processed": output
-                        });
-                        _.each(output.Resources, function (v) {
+                        addToDB(tweet, output);
+
+                        _.each(output.Resources, function (resource) {
                             //do not count search keywords
-                            if (!_.contains(watchSymbols, v['@surfaceForm'])) {
-                                //console.log(v['@surfaceForm']+' => '+v['@URI']);
-                                if (watchList.symbols[v['@surfaceForm']] == undefined) {
-                                    watchList.symbols[v['@surfaceForm']] = {
-                                        count: 1,
-                                        type: getEntityType(v['@types']),
-                                        uri: v['@URI']
-                                    };
-                                    console.log('------>' + v['@surfaceForm']);
-                                    //console.log('------>type: '+getEntityType(v['@types']));
-                                } else {
-                                    watchList.symbols[v['@surfaceForm']].count++;
-                                    //Increment total
-                                    watchList.total++;
-                                    //limit for demo
-                                    if (Object.keys(watchList.symbols).length > 400) {
-                                        pause_streaming = 1;
-                                    }
-                                    //console.log(watchList);
-                                }
-                                tweet_text = tweet_text.replace(v['@surfaceForm'], '&nbsp;<span resource="' + v['@URI'] + '" class="r_entity r_' + getEntityType(v['@types']).toLowerCase() + '" typeOf="' + v['@types'] + '">' + v['@surfaceForm'] + '</span>&nbsp;');
+                            if (!_.contains(watchSymbols, resource['@surfaceForm'])) {
+
+                                //Tell the twitter API to filter on the watchSymbols
+                                updateWatchListSymbol(resource);
+
+                                tweet_text = tweet_text.replace(resource['@surfaceForm'], '&nbsp;<span resource="' + resource['@URI'] + '" class="r_entity r_' + getEntityType(resource['@types']).toLowerCase() + '" typeOf="' + resource['@types'] + '">' + resource['@surfaceForm'] + '</span>&nbsp;');
                             }
                         });
                         //Send to all the clients
@@ -135,6 +115,7 @@ var start = function (watchSymbols, sockets) {
      },3000)
      */
 };
+
 var emptyWatchList = function () {
     watchList.tweets_no = 0;
     watchList.total = 0;
@@ -150,6 +131,38 @@ var stopStreaming = function (stream, sockets) {
     sockets.sockets.emit('data', watchList);
     sockets.sockets.emit('stop', {});
 };
+
+var addToDB = function (tweet, output) {
+    db.get('tweetscollection').insert({
+        "tweet_id": tweet.id,
+        "user_name": tweet.user.screen_name,
+        "created_at": tweet.created_at,
+        "place": tweet.place,
+        "processed": output
+    });
+};
+
+var updateWatchListSymbol = function (resource) {
+    if (watchList.symbols[resource['@surfaceForm']] == undefined) {
+        watchList.symbols[resource['@surfaceForm']] = {
+            count: 1,
+            type: getEntityType(resource['@types']),
+            uri: resource['@URI']
+        };
+        console.log('------>' + resource['@surfaceForm']);
+        console.log('------>type: ' + getEntityType(resource['@types']));
+    } else {
+        watchList.symbols[resource['@surfaceForm']].count++;
+        //Increment total
+        watchList.total++; //TODO: Check what Total is for (why not incremented after the if else block?
+        //limit for demo
+        if (Object.keys(watchList.symbols).length > 400) {
+            pause_streaming = 1;
+        }
+        //console.log(watchList);
+    }
+};
+
 var getEntityType = function (types_str) {
     if (types_str == '') {
         return 'Misc';
