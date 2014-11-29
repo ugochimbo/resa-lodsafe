@@ -65,12 +65,11 @@ var start = function (watchSymbols, sockets) {
             send_data = 1;
            
             //Make sure it was a valid tweet with place or geo-location enabled (Place used below)
-            if (tweet.text !== undefined && tweet.place !== null) {
+            if (tweet.text !== undefined) {
                 spotlight.sendRequest(tweet.text, function (output) {
                     /*console.log('*********************************');
                     console.log(tweet.text);*/
                     if (output.Resources != undefined) {
-
                         //store tweets on DB
                         addToDB(tweet, output);
 
@@ -150,8 +149,8 @@ var updateWatchListSymbol = function (resource) {
             type: getEntityType(resource['@types']),
             uri: resource['@URI']
         };
-        console.log('------>' + resource['@surfaceForm']);
-        console.log('------>type: ' + getEntityType(resource['@types']));
+        /*console.log('------>' + resource['@surfaceForm']);
+        console.log('------>type: ' + getEntityType(resource['@types']));*/
     } else {
         watchList.symbols[resource['@surfaceForm']].count++;
         //Increment total
