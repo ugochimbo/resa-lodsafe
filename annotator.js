@@ -61,13 +61,14 @@ var start = function (watchSymbols, sockets) {
                 stream.destroy();
                 sockets.sockets.emit('pause', {});
             }
+
             send_data = 1;
-            var tweet_text = tweet.text;
+           
             //Make sure it was a valid tweet with place or geo-location enabled (Place used below)
-            if (tweet_text !== undefined && tweet.place !== null) {
-                spotlight.sendRequest(tweet_text, function (output) {
+            if (tweet.text !== undefined && tweet.place !== null) {
+                spotlight.sendRequest(tweet.text, function (output) {
                     /*console.log('*********************************');
-                    console.log(tweet_text);*/
+                    console.log(tweet.text);*/
                     if (output.Resources != undefined) {
 
                         //store tweets on DB
@@ -80,12 +81,12 @@ var start = function (watchSymbols, sockets) {
                                 //Tell the twitter API to filter on the watchSymbols
                                 updateWatchListSymbol(resource);
 
-                                tweet_text = tweet_text.replace(resource['@surfaceForm'], '&nbsp;<span resource="' + resource['@URI'] + '" class="r_entity r_' + getEntityType(resource['@types']).toLowerCase() + '" typeOf="' + resource['@types'] + '">' + resource['@surfaceForm'] + '</span>&nbsp;');
+                                tweet.text = tweet.text.replace(resource['@surfaceForm'], '&nbsp;<span resource="' + resource['@URI'] + '" class="r_entity r_' + getEntityType(resource['@types']).toLowerCase() + '" typeOf="' + resource['@types'] + '">' + resource['@surfaceForm'] + '</span>&nbsp;');
                             }
                         });
                         //Send to all the clients
                         watchList.tweets_no++;
-                        watchList.recent_tweets.push({text: tweet_text, date: tweet.created_at});
+                        watchList.recent_tweets.push({text: tweet.text, date: tweet.created_at});
                         //watchList.current_tweet.text=tweet.text;
                         //watchList.current_tweet.date=tweet.created_at;
                     }
