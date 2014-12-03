@@ -12,80 +12,89 @@ var db = monk('localhost:27017/resa_tweets');
 //DBpedia Spotlight
 var spotlight = require('./spotlight.js');
 
-var watchList = {
+function Annotator(){}
+
+_this = Annotator.prototype;
+
+_this.watchList = {
     search_for: [],
     tweets_no: 0,
     total: 0,
     recent_tweets: [],
     symbols: {}
 };
+
 //Instantiate the twitter component
 //You will need to get your own key. Don't worry, it's free. But I cannot provide you one
 //since it will instantiate a connection on my behalf and will drop all other streaming connections.
 //Check out: https://dev.twitter.com/1
-var _twitter = new twitter({
+_this.twitter = new twitter({
     consumer_key: config.get['twitter_consumer_key'],
     consumer_secret: config.get['twitter_consumer_secret'],
     access_token_key: config.get['twitter_access_token_key'],
     access_token_secret: config.get['twitter_access_token_secret']
 });
 
-var stop_streaming = 0;
+_this.stop_streaming = 0;
 
-var stop = function () {
-    stop_streaming = 1;
+_this.stop = function () {
+    _this.stop_streaming = 1;
 };
 
-var pause_streaming = 0;
+_this.pause_streaming = 0;
 
-var pause = function () {
-    pause_streaming = 1;
+_this.pause = function () {
+    _this.pause_streaming = 1;
 };
 
-var start = function (watchSymbols, sockets) {
-    stop_streaming = 0;
-    pause_streaming = 0;
-    var send_data = 0;
+_this.send_data = 0;
+
+_this.start = function (watchSymbols, sockets) {
+    _this.stop_streaming = 0;
+    _this.pause_streaming = 0;
+    _this.send_data = 0;
+
     if (!watchSymbols.length) {
         return 0;
     }
-    watchList.search_for = watchSymbols;
 
-    _twitter.stream('filter', {track: watchSymbols}, function (stream) {
+    this.watchList.search_for = watchSymbols;
+
+    this.twitter.stream('filter', {track: watchSymbols}, function (stream) {
         stream.on('data', function (tweet) {
-            if (stop_streaming) {
-                stopStreaming(stream, sockets);
+            if (_this.stop_streaming) {
+                _this.stopStreaming(stream, sockets);
             }
-            if (pause_streaming) {
+            if (_this.pause_streaming) {
                 console.log('pause streaming...');
                 stream.destroy();
                 sockets.sockets.emit('pause', {});
             }
 
-            send_data = 1;
-           
+            _this.send_data = 1;
+
             //Make sure it was a valid tweet with place or geo-location enabled (Place used below)
             if (tweet.text !== undefined) {
                 spotlight.sendRequest(tweet.text, function (output) {
-                    /*console.log('*********************************');
-                    console.log(tweet.text);*/
+                    console.log('*********************************');
+                    console.log(tweet.text);
                     if (output.Resources != undefined) {
                         //store tweets on DB
-                        addToDB(tweet, output);
+                        _this.addToDB(tweet, output);
 
                         _.each(output.Resources, function (resource) {
                             //do not count search keywords
                             if (!_.contains(watchSymbols, resource['@surfaceForm'])) {
 
                                 //Tell the twitter API to filter on the watchSymbols
-                                updateWatchListSymbol(resource);
+                                _this.updateWatchListSymbol(resource);
 
-                                tweet.text = tweet.text.replace(resource['@surfaceForm'], '&nbsp;<span resource="' + resource['@URI'] + '" class="r_entity r_' + getEntityType(resource['@types']).toLowerCase() + '" typeOf="' + resource['@types'] + '">' + resource['@surfaceForm'] + '</span>&nbsp;');
+                                tweet.text = tweet.text.replace(resource['@surfaceForm'], '&nbsp;<span resource="' + resource['@URI'] + '" class="r_entity r_' + _this.getEntityType(resource['@types']).toLowerCase() + '" typeOf="' + resource['@types'] + '">' + resource['@surfaceForm'] + '</span>&nbsp;');
                             }
                         });
                         //Send to all the clients
-                        watchList.tweets_no++;
-                        watchList.recent_tweets.push({text: tweet.text, date: tweet.created_at});
+                        _this.watchList.tweets_no++;
+                        _this.watchList.recent_tweets.push({text: tweet.text, date: tweet.created_at});
                         //watchList.current_tweet.text=tweet.text;
                         //watchList.current_tweet.date=tweet.created_at;
                     }
@@ -93,15 +102,15 @@ var start = function (watchSymbols, sockets) {
             }
         });
         //add a threshold to stop service if we got more than 1000 tweets
-        if (watchList.tweets_no > 1000) {
-            stopStreaming(stream, sockets);
+        if (_this.watchList.tweets_no > 1000) {
+            _this.stopStreaming(stream, sockets);
         }
         //acts as a buffer to slow down emiting results
         setInterval(function () {
-            if (send_data) {
-                sockets.sockets.emit('data', watchList);
-                watchList.recent_tweets = [];
-                send_data = 0;
+            if (_this.send_data) {
+                sockets.sockets.emit('data', _this.watchList);
+                _this.watchList.recent_tweets = [];
+                _this.send_data = 0;
             }
         }, 1500);
     });
@@ -116,23 +125,23 @@ var start = function (watchSymbols, sockets) {
      */
 };
 
-var emptyWatchList = function () {
-    watchList.tweets_no = 0;
-    watchList.total = 0;
-    watchList.recent_tweets = [];
-    watchList.symbols = {}
+_this.emptyWatchList = function () {
+    this.watchList.tweets_no = 0;
+    this.watchList.total = 0;
+    this.watchList.recent_tweets = [];
+    this.watchList.symbols = {}
 };
-var stopStreaming = function (stream, sockets) {
+_this.stopStreaming = function (stream, sockets) {
     //Reset collection
     db.get('tweetscollection').drop();
     console.log('stop streaming...');
-    emptyWatchList();
+    this.emptyWatchList();
     stream.destroy();
-    sockets.sockets.emit('data', watchList);
+    sockets.sockets.emit('data', this.watchList);
     sockets.sockets.emit('stop', {});
 };
 
-var addToDB = function (tweet, output) {
+_this.addToDB = function (tweet, output) {
     db.get('tweetscollection').insert({
         "tweet_id": tweet.id,
         "user_name": tweet.user.screen_name,
@@ -142,28 +151,28 @@ var addToDB = function (tweet, output) {
     });
 };
 
-var updateWatchListSymbol = function (resource) {
-    if (watchList.symbols[resource['@surfaceForm']] == undefined) {
-        watchList.symbols[resource['@surfaceForm']] = {
+_this.updateWatchListSymbol = function (resource) {
+    if (this.watchList.symbols[resource['@surfaceForm']] == undefined) {
+        this.watchList.symbols[resource['@surfaceForm']] = {
             count: 1,
-            type: getEntityType(resource['@types']),
+            type: this.getEntityType(resource['@types']),
             uri: resource['@URI']
         };
         /*console.log('------>' + resource['@surfaceForm']);
         console.log('------>type: ' + getEntityType(resource['@types']));*/
     } else {
-        watchList.symbols[resource['@surfaceForm']].count++;
+        this.watchList.symbols[resource['@surfaceForm']].count++;
         //Increment total
-        watchList.total++; //TODO: Check what Total is for (why not incremented after the if else block?
+        this.watchList.total++; //TODO: Check what Total is for (why not incremented after the if else block?
         //limit for demo
-        if (Object.keys(watchList.symbols).length > 400) {
-            pause_streaming = 1;
+        if (Object.keys(this.watchList.symbols).length > 400) {
+            this.pause_streaming = 1;
         }
         //console.log(watchList);
     }
 };
 
-var getEntityType = function (types_str) {
+_this.getEntityType = function (types_str) {
     if (types_str == '') {
         return 'Misc';
     }
@@ -182,7 +191,7 @@ var getEntityType = function (types_str) {
 
 };
 //TODO:delete low level nodes when we get a huge amount of links
-var removeWeakSymbols = function (watchList) {
+_this.removeWeakSymbols = function (watchList) {
     var filtered_list = {};
     var removed_ones = {};
     // calculate the count of symbols
@@ -199,13 +208,8 @@ var removeWeakSymbols = function (watchList) {
     }
     return removed_ones;
 };
-module.exports = {
-    start: start,
-    stop: stop,
-    pause: pause,
-    watchList: watchList,
-    emptyWatchList: emptyWatchList
-};
+
+module.exports = Annotator;
 //Reset everything on a new day!
 //We don't want to keep data around from the previous day so reset everything.
 /*
