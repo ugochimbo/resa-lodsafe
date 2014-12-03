@@ -7,7 +7,9 @@ var express = require('express')
     , cronJob = require('cron').CronJob
     , _ = require('underscore')
     , path = require('path');
-var annotator=require('./annotator.js');
+var ResaAnnotator=require('./annotator.js');
+var LodsafeAnnotator = require('./extensions/lodsafe/lodsafe.js');
+
 //Create an express app
 var app = express();
 
@@ -31,6 +33,10 @@ app.use(app.router);
 app.use(require('stylus').middleware(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+/*Declare Class Variables*/
+var annotator = new ResaAnnotator();
+var lodsafe = new LodsafeAnnotator();
+
 //We're using bower components so add it to the path to make things easier
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 // development only
@@ -50,6 +56,11 @@ app.get('/', function(req, res) {
     res.render('index', { data: annotator.watchList });
 });
 
+app.get('/lodsafe', function(req, res) {
+    console.log('In Lodsafe');
+    res.render('index', { data: lodsafe.watchList });
+});
+
 //Start a Socket.IO listen
 var sockets = io.listen(server);
 //Set the sockets.io configuration.
@@ -60,6 +71,7 @@ var sockets = io.listen(server);
  sockets.set('polling duration', 10);
  });
  */
+
 //If the client just connected, give them fresh data!
 sockets.sockets.on('connection', function(socket) {
     socket.emit('data', annotator.watchList);
