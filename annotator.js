@@ -24,6 +24,13 @@ _this.watchList = {
     symbols: {}
 };
 
+_this.flags = {
+    stop_streaming : 0,
+    pause_streaming : 0,
+    send_data : 0,
+    valid_resource : false
+};
+
 //Instantiate the twitter component
 //You will need to get your own key. Don't worry, it's free. But I cannot provide you one
 //since it will instantiate a connection on my behalf and will drop all other streaming connections.
@@ -35,24 +42,24 @@ _this.twitter = new twitter({
     access_token_secret: config.get['twitter_access_token_secret']
 });
 
-_this.stop_streaming = 0;
 
 _this.stop = function () {
-    _this.stop_streaming = 1;
+    _this.flags.stop_streaming = 1;
 };
 
-_this.pause_streaming = 0;
 
 _this.pause = function () {
-    _this.pause_streaming = 1;
+    _this.flags.pause_streaming = 1;
 };
 
-_this.send_data = 0;
+_this.isValidResource = function() {
+
+};
 
 _this.start = function (watchSymbols, sockets) {
-    _this.stop_streaming = 0;
-    _this.pause_streaming = 0;
-    _this.send_data = 0;
+    _this.flags.stop_streaming = 0;
+    _this.flags.pause_streaming = 0;
+    _this.flags.send_data = 0;
 
     if (!watchSymbols.length) {
         return 0;
@@ -62,22 +69,22 @@ _this.start = function (watchSymbols, sockets) {
 
     this.twitter.stream('filter', {track: watchSymbols}, function (stream) {
         stream.on('data', function (tweet) {
-            if (_this.stop_streaming) {
+            if (_this.flags.stop_streaming) {
                 _this.stopStreaming(stream, sockets);
             }
-            if (_this.pause_streaming) {
+            if (_this.flags.pause_streaming) {
                 console.log('pause streaming...');
                 stream.destroy();
                 sockets.sockets.emit('pause', {});
             }
 
-            _this.send_data = 1;
+            _this.flags.send_data = 1;
 
-            //Make sure it was a valid tweet with place or geo-location enabled (Place used below)
-            if (tweet.text !== undefined) {
+            //Make sure it was a valid tweet with place
+            if (_this.isValidTweet(tweet)) {
                 spotlight.sendRequest(tweet.text, function (output) {
-                    console.log('*********************************');
-                    console.log(tweet.text);
+                    /*console.log('*********************************');
+                    console.log(tweet.text);*/
                     if (output.Resources != undefined) {
                         //store tweets on DB
                         _this.addToDB(tweet, output);
@@ -89,14 +96,11 @@ _this.start = function (watchSymbols, sockets) {
                                 //Tell the twitter API to filter on the watchSymbols
                                 _this.updateWatchListSymbol(resource);
 
-                                tweet.text = tweet.text.replace(resource['@surfaceForm'], '&nbsp;<span resource="' + resource['@URI'] + '" class="r_entity r_' + _this.getEntityType(resource['@types']).toLowerCase() + '" typeOf="' + resource['@types'] + '">' + resource['@surfaceForm'] + '</span>&nbsp;');
+                                tweet.text = _this.annotateResource(tweet, resource);
                             }
                         });
-                        //Send to all the clients
-                        _this.watchList.tweets_no++;
-                        _this.watchList.recent_tweets.push({text: tweet.text, date: tweet.created_at});
-                        //watchList.current_tweet.text=tweet.text;
-                        //watchList.current_tweet.date=tweet.created_at;
+
+                        _this.updateWatchListTweet(tweet);
                     }
                 })
             }
@@ -107,10 +111,10 @@ _this.start = function (watchSymbols, sockets) {
         }
         //acts as a buffer to slow down emiting results
         setInterval(function () {
-            if (_this.send_data) {
+            if (_this.flags.send_data) {
                 sockets.sockets.emit('data', _this.watchList);
                 _this.watchList.recent_tweets = [];
-                _this.send_data = 0;
+                _this.flags.send_data = 0;
             }
         }, 1500);
     });
@@ -125,12 +129,20 @@ _this.start = function (watchSymbols, sockets) {
      */
 };
 
+_this.updateWatchListTweet = function (tweet) {
+    _this.watchList.tweets_no++;
+    _this.watchList.recent_tweets.push({text: tweet.text, date: tweet.created_at});
+    //watchList.current_tweet.text=tweet.text;
+    //watchList.current_tweet.date=tweet.created_at;
+};
+
 _this.emptyWatchList = function () {
     this.watchList.tweets_no = 0;
     this.watchList.total = 0;
     this.watchList.recent_tweets = [];
     this.watchList.symbols = {}
 };
+
 _this.stopStreaming = function (stream, sockets) {
     //Reset collection
     db.get('tweetscollection').drop();
@@ -139,6 +151,10 @@ _this.stopStreaming = function (stream, sockets) {
     stream.destroy();
     sockets.sockets.emit('data', this.watchList);
     sockets.sockets.emit('stop', {});
+};
+
+_this.isValidTweet = function(tweet) {
+    return tweet.text !== undefined;
 };
 
 _this.addToDB = function (tweet, output) {
@@ -170,6 +186,10 @@ _this.updateWatchListSymbol = function (resource) {
         }
         //console.log(watchList);
     }
+};
+
+_this.annotateResource = function (tweet, resource) {
+    return tweet.text.replace(resource['@surfaceForm'], '&nbsp;<span resource="' + resource['@URI'] + '" class="r_entity r_' + _this.getEntityType(resource['@types']).toLowerCase() + '" typeOf="' + resource['@types'] + '">' + resource['@surfaceForm'] + '</span>&nbsp;');
 };
 
 _this.getEntityType = function (types_str) {
@@ -210,6 +230,7 @@ _this.removeWeakSymbols = function (watchList) {
 };
 
 module.exports = Annotator;
+
 //Reset everything on a new day!
 //We don't want to keep data around from the previous day so reset everything.
 /*
