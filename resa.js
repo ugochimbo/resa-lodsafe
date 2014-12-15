@@ -10,7 +10,7 @@ var mongo = require('mongodb');
 var monk = require('monk');
 var db = monk('localhost:27017/resa_tweets');
 //DBpedia Spotlight
-var spotlight = require('./spotlight.js');
+var spotlight = require('dbpedia-spotlight');
 
 function Resa(){
      this.watchList = {
@@ -92,12 +92,14 @@ Resa.prototype = {
 
                 //Make sure it was a valid tweet
                 if (_this.isValidTweet()) {
-                    spotlight.sendRequest(_this.tweet.text, function (output) {
-                        if (output.Resources !== undefined) {
+                    spotlight.annotate(_this.tweet.text, function (output) {
+                        if (output.response.Resources !== undefined) {
+
                             //store tweets on DB
                             _this.addToDB(_this.tweet, output);
 
-                            _.each(output.Resources, function (resource) {
+                            _.each(output.response.Resources, function (resource) {
+                                console.log(resource);
                                 //do not count search keywords
                                 if (!_.contains(watchSymbols, resource['@surfaceForm'])) {
 
