@@ -99,7 +99,6 @@ Resa.prototype = {
                             _this.addToDB(_this.tweet, output);
 
                             _.each(output.response.Resources, function (resource) {
-                                console.log(resource);
                                 //do not count search keywords
                                 if (!_.contains(watchSymbols, resource['@surfaceForm'])) {
 
