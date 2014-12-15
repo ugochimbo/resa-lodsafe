@@ -45,3 +45,5 @@ Assuming you have [vagrant](http://www.vagrantup.com/) installed, you can run Re
  - Express upgraded from 3.x to 4.x
  - Socket.io (client/server) upgraded from 0.9.11 to ~1.2.0
  - nTwitter module (deprecated) replaced with 'twitter' module.
+ - Refactored to use prototypical Inheritance.
+ - Replace local spotlight.js file with dbpedia-spotlight module.
