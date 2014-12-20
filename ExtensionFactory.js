@@ -2,8 +2,8 @@
  * Created by Ugochimbo on 12/20/2014.
  */
 
-var Resa = require('./../resa.js');
-var Lodsafe = require('./../lodsafe.js');
+var Resa = require('./resa.js');
+var Lodsafe = require('./lodsafe.js');
 
 
 function ExtensionFactory() {
