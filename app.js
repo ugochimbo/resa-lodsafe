@@ -70,6 +70,8 @@ var sockets = io.listen(server);
 sockets.sockets.on('connection', function(socket) {
     socket.emit('data', ext.watchList);
     socket.on('startA', function(data) {
+        //ext.stop(); ???
+        ext = extension.getExtensionObject(data.ext);
         ext.emptyWatchList();
         console.log('start streaming...');
         console.log(data.keywords);
