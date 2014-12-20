@@ -273,7 +273,11 @@
         }
         establishPauseMode();
         var socket2 = io.connect(window.location.hostname);
-        socket2.emit('startA', {keywords:terms.split(',')});
+        var data = {
+            keywords : terms.split(','),
+            ext      : 'resa'
+        };
+        socket2.emit('startA', data);
     }
 
     function stopAnalyzing(){
