@@ -7,7 +7,7 @@ var express = require('express')
     , cronJob = require('cron').CronJob
     , _ = require('underscore')
     , path = require('path');
-var ExtensionFactory = require('./extensionfactory');
+var Extension = require('./extensions.js');
 
 //Create an express app
 var app = express();
@@ -32,9 +32,9 @@ app.use(app.router);
 app.use(require('stylus').middleware(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-var extensionFactory = new ExtensionFactory();
 
-var ext = extensionFactory.createObject('resa');
+var extension = new Extension();
+var ext = extension.getExtensionObject('resa');
 
 //We're using bower components so add it to the path to make things easier
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));
