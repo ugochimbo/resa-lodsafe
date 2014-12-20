@@ -7,8 +7,7 @@ var express = require('express')
     , cronJob = require('cron').CronJob
     , _ = require('underscore')
     , path = require('path');
-var Resa = require('./resa.js');
-var Lodsafe = require('./lodsafe.js');
+var ExtensionFactory = require('./extensionfactory');
 
 //Create an express app
 var app = express();
@@ -33,8 +32,9 @@ app.use(app.router);
 app.use(require('stylus').middleware(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-/*Declare Class Variables*/
-var resa = new Resa();
+var extensionFactory = new ExtensionFactory();
+
+var ext = extensionFactory.createObject('resa');
 
 //We're using bower components so add it to the path to make things easier
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));
@@ -52,7 +52,7 @@ app.use(function(err, req, res, next){
 
 //Our only route! Render it with the current watchList
 app.get('/', function(req, res) {
-    res.render('index', { data: resa.watchList });
+    res.render('index', { data: ext.watchList });
 });
 
 //Start a Socket.IO listen
@@ -68,23 +68,23 @@ var sockets = io.listen(server);
 
 //If the client just connected, give them fresh data!
 sockets.sockets.on('connection', function(socket) {
-    socket.emit('data', resa.watchList);
+    socket.emit('data', ext.watchList);
     socket.on('startA', function(data) {
-        resa.emptyWatchList();
+        ext.emptyWatchList();
         console.log('start streaming...');
         console.log(data.keywords);
-        resa.start(data.keywords,sockets);
+        ext.start(data.keywords,sockets);
     });
     socket.on('stopA', function(data) {
         console.log('stop streaming...');
-        resa.stop();
+        ext.stop();
     });
     socket.on('pauseA', function(data) {
         console.log('pause streaming...');
-        resa.pause();
+        ext.pause();
     });
     socket.on('removeAll', function(data) {
-        resa.emptyWatchList();
+        ext.emptyWatchList();
     });
     socket.on('error', function(error) {
         console.log("Error coming from socket!", error.message);
