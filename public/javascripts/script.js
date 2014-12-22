@@ -275,7 +275,7 @@
         var socket2 = io.connect(window.location.hostname);
         var data = {
             keywords : terms.split(','),
-            ext      : 'lodsafe'
+            ext      : 'resa'
         };
         socket2.emit('startA', data);
     }

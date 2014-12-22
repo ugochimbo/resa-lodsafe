@@ -1,0 +1,15 @@
+.container
+   h1
+      | Real-time Semantic Analysis: Twitter Stream
+   p
+      | This application uses Node.js to create a streaming connection between it and Twitter.
+      | Any mentions of the entities in Wikipedia are then broadcasted by analyzing tweets using DBpedia Spotlight.
+   p
+      | Last updated:
+      span(id="last-update") Never
+      | &nbsp; Number of Tweets:
+      b(id="tweets_no")
+         | Number of Tweets
+      | &nbsp; Number of Entities:
+      b(id="symbols_no")
+         | Number of Entities
