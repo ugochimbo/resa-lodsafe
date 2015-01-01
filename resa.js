@@ -28,8 +28,6 @@ function Resa(){
         valid_resource : false
     };
 
-    this.tweet = null;
-
     //Instantiate the twitter component
     //You will need to get your own key. Don't worry, it's free. But I cannot provide you one
     //since it will instantiate a connection on my behalf and will drop all other streaming connections.
@@ -43,8 +41,8 @@ function Resa(){
 }
 
 Resa.prototype = {
-    isValidTweet: function () {
-        return this.tweet.text !== undefined;
+    isValidTweet: function (tweet) {
+        return tweet.text !== undefined;
     },
 
     stop: function () {
@@ -88,28 +86,25 @@ Resa.prototype = {
 
                 _this.flags.send_data = 1;
 
-                _this.tweet = tweet;
-
                 //Make sure it was a valid tweet
-                if (_this.isValidTweet()) {
-                    spotlight.annotate(_this.tweet.text, function (output) {
+                if (_this.isValidTweet(tweet)) {
+                    spotlight.annotate(tweet.text, function (output) {
                         if (output.response.Resources !== undefined) {
 
                             //store tweets on DB
-                            _this.addToDB(_this.tweet, output);
+                           // _this.addToDB(_this.tweet, output);
 
                             _.each(output.response.Resources, function (resource) {
                                 //do not count search keywords
                                 if (!_.contains(watchSymbols, resource['@surfaceForm'])) {
 
-                                    //Tell the twitter API to filter on the watchSymbols
-                                    _this.updateWatchListSymbol(resource);
+                                    _this.updateWatchListSymbol(resource, tweet);
 
-                                    _this.tweet.text = _this.annotateResource(_this.tweet, resource);
+                                    tweet.text = _this.annotateResource(tweet, resource);
                                 }
                             });
 
-                            _this.updateWatchListTweet(_this.tweet);
+                            _this.updateWatchListTweet(tweet);
                         }
                     })
                 }
@@ -179,7 +174,7 @@ Resa.prototype = {
         });
     },
 
-    updateWatchListSymbol: function (resource) {
+    updateWatchListSymbol: function (resource, tweet) {
         if (this.watchList.symbols[resource['@surfaceForm']] == undefined) {
             this.watchList.symbols[resource['@surfaceForm']] = {
                 count: 1,
