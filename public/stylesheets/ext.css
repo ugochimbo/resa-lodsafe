@@ -1,0 +1,9 @@
+/*********Lodsafe********/
+.tweet-location {
+  color: #7c6e7b;
+  opacity: 0.6;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
