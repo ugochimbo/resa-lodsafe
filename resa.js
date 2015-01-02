@@ -92,9 +92,6 @@ Resa.prototype = {
                     spotlight.annotate(_s.titleize(tweet.text), function (output) {
                         if (output.response.Resources !== undefined) {
 
-                            //store tweets on DB
-                           // _this.addToDB(_this.tweet, output);
-
                             _.each(output.response.Resources, function (resource) {
                                 //do not count search keywords
                                 if (!_.contains(watchSymbols, resource['@surfaceForm'])) {
@@ -182,12 +179,10 @@ Resa.prototype = {
                 type: this.getEntityType(resource['@types']),
                 uri: resource['@URI']
             };
-            /*console.log('------>' + resource['@surfaceForm']);
-            console.log('------>type: ' + this.getEntityType(resource['@types']));*/
         } else {
             this.watchList.symbols[resource['@surfaceForm']].count++;
             //Increment total
-            this.watchList.total++; //TODO: Check what Total is for (why not incremented after the if else block?
+            this.watchList.total++;
             //limit for demo
             if (Object.keys(this.watchList.symbols).length > 400) {
                 this.pause_streaming = 1;
