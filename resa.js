@@ -89,7 +89,8 @@ Resa.prototype = {
 
                 //Make sure it was a valid tweet
                 if (_this.isValidTweet(tweet)) {
-                    spotlight.annotate(_s.titleize(tweet.text), function (output) {
+                    tweet.text = _s.titleize(tweet.text);
+                    spotlight.annotate(tweet.text, function (output) {
                         if (output.response.Resources !== undefined) {
 
                             _.each(output.response.Resources, function (resource) {
