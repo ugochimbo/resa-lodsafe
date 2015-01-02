@@ -3,6 +3,7 @@ var http = require('http');
 var twitter = require('twitter');
 var io = require('socket.io');
 var _ = require('underscore');
+var _s = require('underscore.string');
 var path = require('path');
 var util = require('util');
 // MongoDB
@@ -88,7 +89,7 @@ Resa.prototype = {
 
                 //Make sure it was a valid tweet
                 if (_this.isValidTweet(tweet)) {
-                    spotlight.annotate(tweet.text, function (output) {
+                    spotlight.annotate(_s.titleize(tweet.text), function (output) {
                         if (output.response.Resources !== undefined) {
 
                             //store tweets on DB
