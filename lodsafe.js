@@ -14,19 +14,19 @@ function Lodsafe() {
     };
 
     this.updateWatchListSymbol = function (resource, tweet) {
+
         if (this.watchList.symbols[resource['@surfaceForm']] == undefined) {
             this.watchList.symbols[resource['@surfaceForm']] = {
                 count: 1,
                 type: this.getEntityType(resource['@types']),
                 uri: resource['@URI'],
-                tweet_from: this.strict_mode ? tweet.place.country : "N/A"
+                tweet_from: [this.getTweetLocation(tweet)]
             };
-            /*console.log('------>' + resource['@surfaceForm']);
-             console.log('------>type: ' + this.getEntityType(resource['@types']));*/
         } else {
+            this.watchList.symbols[resource['@surfaceForm']].tweet_from.push(this.getTweetLocation(tweet));
             this.watchList.symbols[resource['@surfaceForm']].count++;
             //Increment total
-            this.watchList.total++; //TODO: Check what Total is for (why not incremented after the if else block?
+            this.watchList.total++;
             //limit for demo
             if (Object.keys(this.watchList.symbols).length > 400) {
                 this.pause_streaming = 1;
@@ -34,9 +34,17 @@ function Lodsafe() {
         }
     };
 
+    this.updateWatchListTweet = function (tweet) {
+        this.watchList.tweets_no++;
+        this.watchList.recent_tweets.push({text: tweet.text, date: tweet.created_at, location: this.getTweetLocation(tweet)});
+    };
+
+    this.getTweetLocation = function (tweet){
+        return this.strict_mode ? tweet.place.country : 'N/A';
+    };
+
     Resa.call(this);
 }
-
 
 util.inherits(Lodsafe, Resa);
 
