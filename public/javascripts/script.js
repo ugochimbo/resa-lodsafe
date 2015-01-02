@@ -228,7 +228,11 @@
             $('.tweet').removeClass('animated').removeClass('flash');
             $('.r_entity').css('background-color','');
             $.each(data.recent_tweets,function(i,v){
-                $('#tweets').prepend('<div class="tweet animated slideInDown recent"><div class="tweet-date">'+v.date+'</div>'+v.text+'</div>').linkify({target: '_blank'});
+                $('#tweets').prepend('<div class="tweet animated slideInDown recent">' +
+                                     '<div class="tweet-date">' + v.date + '</div>' +
+                                     '<div class="tweet-location">' + (v.hasOwnProperty('location') ? v.location : 'N/A') + '</div>'+
+                                      v.text+'</div>')
+                                     .linkify({target: '_blank'});
             });
             $('.recent .r_entity').mouseover(function(){
                 $(this).css('background-color','orange');
@@ -310,7 +314,7 @@
         var socket2 = io.connect(window.location.hostname);
         var data = {
             keywords : terms.split(','),
-            ext      : 'resa'
+            ext      : 'lodsafe'
         };
         socket2.emit('startA', data);
     }
