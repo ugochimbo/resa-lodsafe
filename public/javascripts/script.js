@@ -230,7 +230,7 @@
             $.each(data.recent_tweets,function(i,v){
                 $('#tweets').prepend('<div class="tweet animated slideInDown recent">' +
                                      '<div class="tweet-date">' + v.date + '</div>' +
-                                     '<div class="tweet-location">' + (v.hasOwnProperty('location') ? v.location : 'N/A') + '</div>'+
+                                     '<div class="tweet-location">' + (v.hasOwnProperty('location') ? v.location : '') + '</div>'+
                                       v.text+'</div>')
                                      .linkify({target: '_blank'});
             });
