@@ -7,7 +7,7 @@ var express = require('express')
     , cronJob = require('cron').CronJob
     , _ = require('underscore')
     , path = require('path');
-var Extension = require('./extensions.js');
+var Extension = require('./lib/extensions.js');
 
 //Create an express app
 var app = express();
