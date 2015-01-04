@@ -46,6 +46,8 @@
     "util": "^0.10.3"
   },
   "devDependencies": {
-    "gulp": "^3.8.10"
+    "gulp": "^3.8.10",
+    "gulp-concat": "^2.4.3",
+    "gulp-notify": "^2.1.0"
   }
 }
