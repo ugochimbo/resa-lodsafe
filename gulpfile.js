@@ -6,24 +6,34 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 var notify = require('gulp-notify');
 
-var dir = "public/javascripts/extensions/";
+var extensionsDir = "public/javascripts/extensions";
+var entitiesDir = extensionsDir + "/entities/";
+var handlersDir = extensionsDir + "/handlers/";
 
-var src = [
-            dir + 'resa.js',
-            dir + 'lodsafe.js',
-            dir + 'extensionfactory.js',
-            dir + 'extensions.js'
-        ];
+var entities = [
+                    entitiesDir + 'extensions.js',
+                    entitiesDir + 'resa.js',
+                    entitiesDir + 'lodsafe.js',
+                    entitiesDir + 'extensionfactory.js'
+            ];
 
-gulp.task('extensions', function () {
-     return gulp.src(src)
-                .pipe(concat('script.js'))
-                .pipe(gulp.dest(dir + 'dist/'))
-                .pipe(notify({ message: 'Finished Concatenating Extension Scripts'}));
+gulp.task('extensionsEntity', function () {
+     return gulp.src(entities)
+                .pipe(concat('entities.js'))
+                .pipe(gulp.dest(extensionsDir + '/dist/'))
+                .pipe(notify({ message: 'Finished Concatenating Extensions Entities Scripts'}));
+});
+
+
+gulp.task('extensionsHandler', function () {
+    return gulp.src(handlersDir)
+        .pipe(concat('handlers.js'))
+        .pipe(gulp.dest(extensionsDir + '/handlers/'))
+        .pipe(notify({ message: 'Finished Concatenating Extensions Handler Scripts'}));
 });
 
 gulp.task('watch', function() {
-    gulp.watch(dir + '*.js', ['extensions']);
+    gulp.watch(['extensionsEntity'], ['extensionsHandler']);
 });
 
-gulp.task('default', ['extensions', 'watch']);
+gulp.task('default', ['extensionsEntity', 'extensionsHandler', 'watch']);
