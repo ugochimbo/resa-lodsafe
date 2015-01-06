@@ -1,4 +1,5 @@
   var glob_paused=0;
+  var extParams = {};
     $(function() {
         var width = 900,
             height = 900;
@@ -202,6 +203,8 @@
                 max_ent:  400
             };
 
+            setExtensionParams(data.params);
+
             updateTopPanelInfo(data, params);
 
             //Right Panel (Tweet Stream)
@@ -221,6 +224,11 @@
             glob_paused=1;
             pauseAnalyzing();
         });
+
+
+        var setExtensionParams = function (params) {
+            extParams = params;
+        };
 
         function updateTwitterStream(data)
         {
@@ -247,7 +255,6 @@
 
         function updateVisualization(data, params)
         {
-            console.log(data.symbols);
             var slug_text = "";
             for (var key in data.symbols) {
                 var val = data.symbols[key].count / params.total;
@@ -300,10 +307,8 @@
                 glob_paused=0;
             }
         }
+
     });
-
-
-
     function startAnalyzing(){
         glob_paused=0;
         var terms=$('#keyword').val();
@@ -314,7 +319,7 @@
         var socket2 = io.connect(window.location.hostname);
         var data = {
             keywords : terms.split(','),
-            ext      : 'resa'
+            ext      : ext
         };
         socket2.emit('startA', data);
     }
