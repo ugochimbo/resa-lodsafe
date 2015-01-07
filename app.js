@@ -52,7 +52,7 @@ app.use(function(err, req, res, next){
 
 //Our only route! Render it with the current watchList
 app.get('/', function(req, res) {
-    res.render('index', { data: ext.output });
+    res.render('index', { data: ext.watchList });
 });
 
 //Start a Socket.IO listen
@@ -68,10 +68,9 @@ var sockets = io.listen(server);
 
 //If the client just connected, give them fresh data!
 sockets.sockets.on('connection', function(socket) {
-    socket.emit('data', ext.output);
+    socket.emit('data', ext.output());
     socket.on('startA', function(data) {
-        //ext.stop(); ???
-        ext = extension.getExtensionObject(data.ext);
+        ext = extension.getExtensionObject(data.extParams.name);
         ext.emptyWatchList();
         console.log('start streaming...');
         console.log(data.keywords);
