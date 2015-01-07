@@ -1,6 +1,7 @@
-var lodsafe_mode = $("#lodsafe-mode");
+$(function(){
 
-function init() {
+    var lodsafe_mode = $("#lodsafe-mode");
+
     lodsafe_mode.bootstrapSwitch({
         'state': true,
         'animate': true,
@@ -8,10 +9,9 @@ function init() {
         'onColor': 'success',
         'offColor': 'danger'
     });
-}
 
-lodsafe_mode.on('switchChange.bootstrapSwitch', function(event, state) {
-    console.log(state); // true | false
+    lodsafe_mode.on('switchChange.bootstrapSwitch', function(event, state) {
+        extParams.strict = state;
+    });
+
 });
-
-init();
