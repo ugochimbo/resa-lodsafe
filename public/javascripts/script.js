@@ -193,25 +193,25 @@
             */
         });
         socket.on('data', function(data) {
-            //console.log(data);
+            console.log("************* Data: " + JSON.stringify(data));
             //console.log(data.recent_tweets);
 
             var params = {
                 one_node_already_inserted: 0,
                 total: data.total,
-                symbols_no: Object.keys(data.symbols).length,
+                symbols_no: Object.keys(data.watchList.symbols).length,
                 max_ent:  400
-            };
+           };
 
             setExtensionParams(data.params);
 
-            updateTopPanelInfo(data, params);
+            updateTopPanelInfo(data.watchList, params);
 
             //Right Panel (Tweet Stream)
-            updateTwitterStream(data);
+            updateTwitterStream(data.watchList);
 
             //Main Panel (Viz)
-            updateVisualization(data, params);
+            updateVisualization(data.watchList, params);
 
             restart();
 
@@ -228,6 +228,8 @@
 
         var setExtensionParams = function (params) {
             extParams = params;
+
+            console.log(extParams);
         };
 
         function updateTwitterStream(data)
@@ -319,7 +321,7 @@
         var socket2 = io.connect(window.location.hostname);
         var data = {
             keywords : terms.split(','),
-            ext      : ext
+            extParams      : extParams
         };
         socket2.emit('startA', data);
     }
