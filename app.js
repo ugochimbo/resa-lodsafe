@@ -71,6 +71,7 @@ sockets.sockets.on('connection', function(socket) {
     socket.emit('data', ext.output());
     socket.on('startA', function(data) {
         ext = extension.getExtensionObject(data.extParams.name);
+        ext.setParams(data.extParams);
         ext.emptyWatchList();
         console.log('start streaming...');
         console.log(data.keywords);
