@@ -11,7 +11,8 @@ $(function(){
     });
 
     lodsafe_mode.on('switchChange.bootstrapSwitch', function(event, state) {
-        extParams.strict = state;
+        if(extParams['strict'] !== undefined)
+            extParams.strict = state;
     });
 
 });
