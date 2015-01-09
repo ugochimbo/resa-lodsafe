@@ -7,7 +7,7 @@ var express = require('express')
     , cronJob = require('cron').CronJob
     , _ = require('underscore')
     , path = require('path');
-var Extension = require('./lib/core/extensions.js');
+var ExtensionFactory = require('./lib/core/extensionfactory.js');
 
 //Create an express app
 var app = express();
@@ -33,8 +33,8 @@ app.use(require('stylus').middleware(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-var extension = new Extension();
-var ext = extension.getExtensionObject('resa');
+var extensionFactory = new ExtensionFactory();
+var ext = extensionFactory.initObject('resa');
 
 //We're using bower components so add it to the path to make things easier
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));
@@ -66,11 +66,12 @@ var sockets = io.listen(server);
  });
  */
 
+
 //If the client just connected, give them fresh data!
 sockets.sockets.on('connection', function(socket) {
     socket.emit('data', ext.output());
     socket.on('startA', function(data) {
-        ext = extension.getExtensionObject(data.extParams.name);
+        ext = extensionFactory.initObject(data.extParams.name);
         ext.setParams(data.extParams);
         ext.emptyWatchList();
         console.log('start streaming...');
