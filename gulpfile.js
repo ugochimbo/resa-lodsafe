@@ -15,7 +15,7 @@ var handlers = [
 
 gulp.task('extensionsHandler', function () {
     return gulp.src(handlers)
-        .pipe(concat('exthandlers.js'))
+        .pipe(concat('extensionsHandler.js'))
         .pipe(gulp.dest(extensionsDir + '/dist/'))
         .pipe(notify({ message: 'Finished Concatenating Extensions Handler'}));
 });
