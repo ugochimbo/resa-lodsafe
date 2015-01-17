@@ -82,6 +82,43 @@ function Bubblecloud() {
     this.nodes = this.force.nodes();
     this.node = this.svg.selectAll(".node");
 
+    this.updateVisualization = function(data, params){
+            var slug_text = "";
+            for (var key in data.symbols) {
+                var val = data.symbols[key].count / params.total;
+                if (isNaN(val)) {
+                    val = 0;
+                }
+                slug_text=convertToSlug(key);
+                //console.log(d3.select("#bubblecloud svg").selectAll('.node'));
+
+                //Add New Bubble
+                if(!d3.select("#bubblecloud svg").selectAll('.node-circle[id="' + slug_text + '"]').size()){
+                    var start_x=width/2;
+                    var start_y=height/2;
+                    if(params.one_node_already_inserted>0){
+                        //prevent collision
+                        start_y=start_y-(params.one_node_already_inserted*15);
+                    }
+                    //var category=Math.floor(20*Math.random());
+                    var c_size=rScale(data.symbols[key].count);
+                    var uri=data.symbols[key].uri;
+                    var node = {x: start_x, y:start_y, name:key,n_weight:data.symbols[key].count, category:data.symbols[key].type, r:c_size, proportion:val,slug_text:slug_text,uri:uri},
+                        n = nodes.push(node);
+                    params.one_node_already_inserted++;
+                }
+                else{
+                    //Update Existing Bubble
+                    var new_size=rScale(data.symbols[key].count);
+                    if(d3.select("#bubblecloud svg").select('.node-circle[id="' + slug_text + '"]').attr('r')!=new_size){
+                        d3.select("#bubblecloud svg").select('.node-circle[id="' + slug_text + '"]').attr('r',new_size/2).transition().duration(700).attr('r',new_size);
+                    }
+                }
+            }
+
+        restart();
+    };
+
     function mouseover() {
         d3.select(this).select("circle")
             .style("stroke-width", 3);
