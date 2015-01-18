@@ -1,13 +1,13 @@
 $(function(){
 
-    var glob_paused=0;
-    var extParams = {};
+   var base = new Base();
+
+   var socket = io.connect(window.location.hostname);
 
     socket.on('data', function(data) {
         console.log("************* Data: " + JSON.stringify(data));
 
         var params = {
-            one_node_already_inserted: 0,
             total: data.total,
             symbols_no: Object.keys(data.watchList.symbols).length,
             max_ent:  400
@@ -20,16 +20,19 @@ $(function(){
         //Right Panel (Tweet Stream)
         updateTwitterStream(data.watchList);
 
-        //Main Panel (Viz)
-        updateVisualization(data.watchList, params);
+        base.initVisualizations(data.params.visualizations);
 
-        restart();
+        var visualizationObject  = base.getCurrentVisualizationObject();
+        //Main Panel (Viz)
+        visualizationObject.updateVisualization(data.watchList, params);
 
         $('#last-update').text(new Date().toTimeString());
     });
+
     socket.on('stop', function(data) {
         stopAnalyzing();
     });
+
     socket.on('pause', function(data) {
         glob_paused=1;
         pauseAnalyzing();
@@ -53,45 +56,8 @@ $(function(){
         });
     }
 
-    function updateVisualization(data, params)
-    {
-        var slug_text = "";
-        for (var key in data.symbols) {
-            var val = data.symbols[key].count / params.total;
-            if (isNaN(val)) {
-                val = 0;
-            }
-            slug_text=convertToSlug(key);
-            //console.log(d3.select("#bubblecloud svg").selectAll('.node'));
-
-            //Add New Bubble
-            if(!d3.select("#bubblecloud svg").selectAll('.node-circle[id="' + slug_text + '"]').size()){
-                var start_x=width/2;
-                var start_y=height/2;
-                if(params.one_node_already_inserted>0){
-                    //prevent collision
-                    start_y=start_y-(params.one_node_already_inserted*15);
-                }
-                //var category=Math.floor(20*Math.random());
-                var c_size=rScale(data.symbols[key].count);
-                var uri=data.symbols[key].uri;
-                var node = {x: start_x, y:start_y, name:key,n_weight:data.symbols[key].count, category:data.symbols[key].type, r:c_size, proportion:val,slug_text:slug_text,uri:uri},
-                    n = nodes.push(node);
-                params.one_node_already_inserted++;
-            }
-            else{
-                //Update Existing Bubble
-                var new_size=rScale(data.symbols[key].count);
-                if(d3.select("#bubblecloud svg").select('.node-circle[id="' + slug_text + '"]').attr('r')!=new_size){
-                    d3.select("#bubblecloud svg").select('.node-circle[id="' + slug_text + '"]').attr('r',new_size/2).transition().duration(700).attr('r',new_size);
-                }
-            }
-        }
-    }
-
     function updateTopPanelInfo(data, params)
     {
-
         if(params.symbols_no > params.max_ent){
             pauseAnalyzing();
             alert('The demo is limited to '+max_ent+' entities! contact us for more info: khalili@informatik.uni-leipzig.de');
@@ -156,5 +122,4 @@ $(function(){
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
         process_button.removeClass('btn-success').addClass('btn-warning').attr('title','pause').addClass('animated bounceIn').attr('onclick','pauseAnalyzing();');
     }
-
 });
