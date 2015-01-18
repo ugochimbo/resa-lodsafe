@@ -6,7 +6,8 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 var notify = require('gulp-notify');
 
-var extensionsDir = "public/javascripts/extensions";
+var javascriptsDir = "public/javascripts/";
+var extensionsDir = javascriptsDir + "extensions";
 var handlersDir = extensionsDir + "/handlers/";
 
 var visualizationsDir = "public/javascripts/visualizations/";
@@ -19,6 +20,14 @@ var extensionsHandler = [
                     handlersDir + 'resaHandler.js',
                     handlersDir + 'lodsafeHandler.js'
                ];
+
+var scripts = [
+    visualizationsDir + 'dist/*',
+    visualizationsDir + 'factory/*',
+    javascriptsDir + 'app/base.js',
+    javascriptsDir + 'app/appHandler.js',
+    extensionsDir + 'dist/*'
+];
 
 gulp.task('extensionsHandler', function () {
     return gulp.src(extensionsHandler)
@@ -34,8 +43,15 @@ gulp.task('visualizations', function () {
         .pipe(notify({ message: 'Finished Concatenating Visualizations'}));
 });
 
-gulp.task('watch', function() {
-    gulp.watch(['extensionsHandler', 'visualizations']);
+gulp.task('scripts', function () {
+    return gulp.src(scripts)
+        .pipe(concat('scripts.js'))
+        .pipe(gulp.dest(javascriptsDir + '/dist/'))
+        .pipe(notify({ message: 'Finished Concatenating Scripts'}));
 });
 
-gulp.task('default', ['extensionsHandler', 'visualizations', 'watch']);
+/*gulp.task('watch', function() {
+    gulp.watch(['extensionsHandler', 'visualizations']);
+});*/
+
+gulp.task('default', ['extensionsHandler', 'visualizations', 'scripts']);
