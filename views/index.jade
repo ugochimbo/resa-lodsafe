@@ -13,14 +13,8 @@ body
            Example row of columns
         .row
             #main_content.col-xs-12.col-md-8
-                ul.nav.nav-tabs
-                    li.active
-                        a(data-toggle="tab",href="#bubblecloud") Bubble Cloud
-                    li
-                        a(data-toggle="tab",href="#other") Other Views
+                ul#visualizations.nav.nav-tabs
                 #content.tab-content
-                    include visualizations/bubblecloud
-                    include visualizations/other
             .col-xs-6.col-md-4
                 include sections/twitter-stream
         hr
