@@ -1,3 +1,8 @@
+
+/************************** Extensions Handlers **************************/
+
+/* :::: Lodsafe :::: */
+
 $(function(){
 
     var lodsafe_mode = $("#lodsafe-mode");

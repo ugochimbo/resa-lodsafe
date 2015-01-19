@@ -1,3 +1,6 @@
+
+/************************** Visualizations  Factory **************************/
+
 function Visualizations() {
 
     this.svg = null;

@@ -116,7 +116,7 @@ function Bubblecloud() {
             }
         }
 
-        restart();
+       // restart();
     };
 
     function mouseover() {
@@ -281,14 +281,11 @@ function Base() {
         return extParams;
     };
 
-    this.resetVisualization = function() {
-
+    this.setExtensionParams = function (params){
+        extParams = params;
     };
 
     var addVisualizationTab = function (visualizations) {
-
-        console.log(JSON.stringify(visualizations));
-
         var tabAnchor = "";
         var tabContent = "";
         for (var index = 0; index < visualizations.length; ++index) {
@@ -305,9 +302,12 @@ function Base() {
         $('#content').find('div').first().addClass("active");
     };
 
-    this.initVisualizations = function(visualizations) {
-        addVisualizationTab(visualizations);
-        setActiveVisualizationTab();
+    this.setExtensionVisualizations = function(data) {
+        if(this.getExtensionParams().name !== undefined || data.params.name !== this.getExtensionParams().name)
+        {
+            addVisualizationTab(data.params.visualizations);
+            setActiveVisualizationTab();
+        }
     };
 
 }
@@ -326,14 +326,13 @@ $(function(){
             max_ent:  400
         };
 
-        setExtensionParams(data.params);
-
         updateTopPanelInfo(data.watchList, params);
+
+        base.setExtensionParams(data.params);
+        base.setExtensionVisualizations(data);
 
         //Right Panel (Tweet Stream)
         updateTwitterStream(data.watchList);
-
-        base.initVisualizations(data.params.visualizations);
 
         var visualizationObject  = base.getCurrentVisualizationObject();
         //Main Panel (Viz)
@@ -350,10 +349,6 @@ $(function(){
         glob_paused=1;
         pauseAnalyzing();
     });
-
-    var setExtensionParams = function (params) {
-        extParams = params;
-    };
 
     function updateTwitterStream(data)
     {

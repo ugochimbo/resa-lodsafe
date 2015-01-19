@@ -1,3 +1,8 @@
+
+/********************************** Visualizations  *********************************/
+
+/* :::::::: Bubblecloud :::::::: */
+
 function Bubblecloud() {
     Visualizations.call(this);
     this.data_types_no = 20;

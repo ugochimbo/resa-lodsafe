@@ -1,3 +1,6 @@
+
+/************************** App Base Object **************************/
+
 function Base() {
     var glob_paused=0;
     var extParams = {};
