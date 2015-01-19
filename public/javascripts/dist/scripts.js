@@ -1,3 +1,6 @@
+
+/************************** Visualizations  Factory **************************/
+
 function Visualizations() {
 
     this.svg = null;
@@ -9,6 +12,11 @@ function Visualizations() {
 Visualizations.prototype = {
     updateVisualization: function (data) {}
 };
+
+/********************************** Visualizations  *********************************/
+
+/* :::::::: Bubblecloud :::::::: */
+
 function Bubblecloud() {
     Visualizations.call(this);
     this.data_types_no = 20;
@@ -116,7 +124,7 @@ function Bubblecloud() {
             }
         }
 
-       // restart();
+      //  restart();
     };
 
     function mouseover() {
@@ -254,6 +262,9 @@ function VisualizationFactory(){
 
 }
 
+
+/************************** App Base Object **************************/
+
 function Base() {
     var glob_paused=0;
     var extParams = {};
@@ -281,7 +292,7 @@ function Base() {
         return extParams;
     };
 
-    this.setExtensionParams = function (params){
+    this.setExtensionParams = function(params){
         extParams = params;
     };
 
@@ -311,6 +322,10 @@ function Base() {
     };
 
 }
+
+
+/************************** App  Handler **************************/
+
 $(function(){
 
    var base = new Base();
@@ -328,11 +343,11 @@ $(function(){
 
         updateTopPanelInfo(data.watchList, params);
 
-        base.setExtensionParams(data.params);
-        base.setExtensionVisualizations(data);
-
         //Right Panel (Tweet Stream)
         updateTwitterStream(data.watchList);
+
+        base.setExtensionParams(data.params);
+        base.setExtensionVisualizations(data);
 
         var visualizationObject  = base.getCurrentVisualizationObject();
         //Main Panel (Viz)
@@ -349,6 +364,10 @@ $(function(){
         glob_paused=1;
         pauseAnalyzing();
     });
+
+    var setExtensionParams = function (params) {
+        extParams = params;
+    };
 
     function updateTwitterStream(data)
     {
@@ -430,4 +449,27 @@ $(function(){
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
         process_button.removeClass('btn-success').addClass('btn-warning').attr('title','pause').addClass('animated bounceIn').attr('onclick','pauseAnalyzing();');
     }
+});
+
+/************************** Extensions Handlers **************************/
+
+/* :::: Lodsafe :::: */
+
+$(function(){
+
+    var lodsafe_mode = $("#lodsafe-mode");
+
+    lodsafe_mode.bootstrapSwitch({
+        'state': true,
+        'animate': true,
+        'handleWidth': 80,
+        'onColor': 'success',
+        'offColor': 'danger'
+    });
+
+    lodsafe_mode.on('switchChange.bootstrapSwitch', function(event, state) {
+        if(extParams['strict'] !== undefined)
+            extParams.strict = state;
+    });
+
 });

@@ -1,3 +1,6 @@
+
+/************************** Visualizations  Factory **************************/
+
 function Visualizations() {
 
     this.svg = null;
@@ -9,6 +12,11 @@ function Visualizations() {
 Visualizations.prototype = {
     updateVisualization: function (data) {}
 };
+
+/********************************** Visualizations  *********************************/
+
+/* :::::::: Bubblecloud :::::::: */
+
 function Bubblecloud() {
     Visualizations.call(this);
     this.data_types_no = 20;
@@ -116,7 +124,7 @@ function Bubblecloud() {
             }
         }
 
-        restart();
+      //  restart();
     };
 
     function mouseover() {
@@ -202,7 +210,7 @@ function Bubblecloud() {
             .attr("y", function(d) { return d.y; });
     }
     function restart() {
-        var node = node.data(nodes);
+        /* var node = node.data(nodes);
 
         var nn = node.enter().insert('g').attr("class", "node")
             .on("mouseover", mouseover)
@@ -232,7 +240,7 @@ function Bubblecloud() {
         // .duration(500)
         // .attr("style","font-size:1.4em;")
 
-        force.start();
+        force.start(); */
     }
 
     rScale = d3.scale.log ()

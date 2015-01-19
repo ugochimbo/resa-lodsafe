@@ -7,8 +7,8 @@ var concat = require('gulp-concat');
 var notify = require('gulp-notify');
 
 var javascriptsDir = "public/javascripts/";
-var extensionsDir = javascriptsDir + "extensions";
-var handlersDir = extensionsDir + "/handlers/";
+var extensionsDir = javascriptsDir + "extensions/";
+var extensionsHandlerDir = extensionsDir + "/handlers/";
 
 var visualizationsDir = "public/javascripts/visualizations/";
 var visualizations = [
@@ -17,16 +17,16 @@ var visualizations = [
                 ];
 
 var extensionsHandler = [
-                    handlersDir + 'resaHandler.js',
-                    handlersDir + 'lodsafeHandler.js'
+                    extensionsHandlerDir + 'resaHandler.js',
+                    extensionsHandlerDir + 'lodsafeHandler.js'
                ];
 
 var scripts = [
-    visualizationsDir + 'dist/*',
-    visualizationsDir + 'factory/*',
+    visualizationsDir + 'dist/visualizations.js',
+    visualizationsDir + 'factory/visualizationfactory.js',
     javascriptsDir + 'app/base.js',
     javascriptsDir + 'app/appHandler.js',
-    extensionsDir + 'dist/*'
+    extensionsDir + 'dist/extensionsHandler.js'
 ];
 
 gulp.task('extensionsHandler', function () {
