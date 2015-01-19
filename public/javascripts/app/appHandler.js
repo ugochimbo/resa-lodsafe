@@ -11,9 +11,6 @@ $(function(){
     socket.on('data', function(data) {
         console.log("************* Data: " + JSON.stringify(data));
 
-
-        base.initVisualizations(data.params.visualizations);
-
         var params = {
             total: data.total,
             symbols_no: Object.keys(data.watchList.symbols).length,
