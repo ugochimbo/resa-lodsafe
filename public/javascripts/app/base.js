@@ -28,10 +28,11 @@ function Base() {
         return extParams;
     };
 
+    this.setExtensionParams = function(params){
+        extParams = params;
+    };
+
     var addVisualizationTab = function (visualizations) {
-
-        console.log(JSON.stringify(visualizations));
-
         var tabAnchor = "";
         var tabContent = "";
         for (var index = 0; index < visualizations.length; ++index) {
