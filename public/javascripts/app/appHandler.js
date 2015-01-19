@@ -7,20 +7,22 @@ $(function(){
     socket.on('data', function(data) {
         console.log("************* Data: " + JSON.stringify(data));
 
+
+        base.initVisualizations(data.params.visualizations);
+
         var params = {
             total: data.total,
             symbols_no: Object.keys(data.watchList.symbols).length,
             max_ent:  400
         };
 
-        setExtensionParams(data.params);
-
         updateTopPanelInfo(data.watchList, params);
 
         //Right Panel (Tweet Stream)
         updateTwitterStream(data.watchList);
 
-        base.initVisualizations(data.params.visualizations);
+        base.setExtensionParams(data.params);
+        base.setExtensionVisualizations(data);
 
         var visualizationObject  = base.getCurrentVisualizationObject();
         //Main Panel (Viz)
