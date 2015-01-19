@@ -110,7 +110,7 @@ function Bubblecloud() {
             }
         }
 
-        restart();
+      //  restart();
     };
 
     function mouseover() {
