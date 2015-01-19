@@ -25,10 +25,6 @@ function Base() {
         return extParams;
     };
 
-    this.resetVisualization = function() {
-
-    };
-
     var addVisualizationTab = function (visualizations) {
 
         console.log(JSON.stringify(visualizations));
@@ -49,9 +45,12 @@ function Base() {
         $('#content').find('div').first().addClass("active");
     };
 
-    this.initVisualizations = function(visualizations) {
-        addVisualizationTab(visualizations);
-        setActiveVisualizationTab();
+    this.setExtensionVisualizations = function(data) {
+        if(this.getExtensionParams().name !== undefined || data.params.name !== this.getExtensionParams().name)
+        {
+            addVisualizationTab(data.params.visualizations);
+            setActiveVisualizationTab();
+        }
     };
 
 }
