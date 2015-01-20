@@ -113,6 +113,10 @@ function Bubblecloud() {
       //  restart();
     };
 
+    this.remove = function(){
+        d3.select("#bubblecloud svg").selectAll('g').remove();
+    };
+
     function mouseover() {
         d3.select(this).select("circle")
             .style("stroke-width", 3);
