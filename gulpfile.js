@@ -8,7 +8,8 @@ var notify = require('gulp-notify');
 
 var javascriptsDir = "public/javascripts/";
 var extensionsDir = javascriptsDir + "extensions/";
-var extensionsHandlerDir = extensionsDir + "/handlers/";
+var extensionsHandlerDir = extensionsDir + "handlers/";
+var distDir = javascriptsDir + 'dist/';
 
 var visualizationsDir = "public/javascripts/visualizations/";
 var visualizations = [
@@ -22,31 +23,32 @@ var extensionsHandler = [
                ];
 
 var scripts = [
-    visualizationsDir + 'dist/visualizations.js',
+    javascriptsDir + 'dist/visualizations.js',
     visualizationsDir + 'factory/visualizationfactory.js',
+    javascriptsDir + 'dist/extensionsHandler.js',
+    extensionsDir + 'factory/extensionsHandlerFactory.js',
     javascriptsDir + 'app/base.js',
-    javascriptsDir + 'app/appHandler.js',
-    extensionsDir + 'dist/extensionsHandler.js'
+    javascriptsDir + 'app/appHandler.js'
 ];
 
 gulp.task('extensionsHandler', function () {
     return gulp.src(extensionsHandler)
         .pipe(concat('extensionsHandler.js'))
-        .pipe(gulp.dest(extensionsDir + '/dist/'))
+        .pipe(gulp.dest(distDir))
         .pipe(notify({ message: 'Finished Concatenating Extensions Handler'}));
 });
 
 gulp.task('visualizations', function () {
     return gulp.src(visualizations)
         .pipe(concat('visualizations.js'))
-        .pipe(gulp.dest(visualizationsDir + '/dist/'))
+        .pipe(gulp.dest(distDir))
         .pipe(notify({ message: 'Finished Concatenating Visualizations'}));
 });
 
 gulp.task('scripts', function () {
     return gulp.src(scripts)
         .pipe(concat('scripts.js'))
-        .pipe(gulp.dest(javascriptsDir + '/dist/'))
+        .pipe(gulp.dest(distDir))
         .pipe(notify({ message: 'Finished Concatenating Scripts'}));
 });
 
