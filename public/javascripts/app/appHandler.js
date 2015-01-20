@@ -1,12 +1,17 @@
 
 
 /************************** App  Handler **************************/
-
-$(function(){
-
    var base = new Base();
+   var extensionHandlerFactory = new ExtensionHandlerFactory();
+   var visualizationObject  = base.getCurrentVisualizationObject();
 
    var socket = io.connect(window.location.hostname);
+
+    function loadExtensionParams(extName) {
+        base.loadExtensionParams();
+        var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
+        extensionHandler.init();
+    }
 
     socket.on('data', function(data) {
         console.log("************* Data: " + JSON.stringify(data));
@@ -23,9 +28,11 @@ $(function(){
         updateTwitterStream(data.watchList);
 
         base.setExtensionParams(data.params);
-        base.setExtensionVisualizations(data);
 
-        var visualizationObject  = base.getCurrentVisualizationObject();
+        loadExtensionParams(data.params.name);
+
+        base.loadExtensionVisualizations(data.params.name);
+
         //Main Panel (Viz)
         visualizationObject.updateVisualization(data.watchList, params);
 
@@ -125,4 +132,3 @@ $(function(){
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
         process_button.removeClass('btn-success').addClass('btn-warning').attr('title','pause').addClass('animated bounceIn').attr('onclick','pauseAnalyzing();');
     }
-});

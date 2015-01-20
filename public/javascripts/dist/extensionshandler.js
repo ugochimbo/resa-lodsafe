@@ -1,6 +1,14 @@
 
 /************************** Extensions Handlers **************************/
 
+/* :::: ReSA :::: */
+
+    function ResaHandler() {
+        this.init = function() {}
+    }
+
+/************************** Extensions Handlers **************************/
+
 /* :::: Lodsafe :::: */
 
     function LodsafeHandler() {
@@ -21,3 +29,16 @@
             });
         }
     }
+
+////// Ext Handler Factory
+
+function ExtensionHandlerFactory(){
+
+    this.createExtensionHandlerObject = function(extName) {
+        if (extName === 'lodsafe')
+            return new LodsafeHandler();
+
+        return new ResaHandler();
+    }
+
+}

@@ -210,7 +210,7 @@ function Bubblecloud() {
             .attr("y", function(d) { return d.y; });
     }
     function restart() {
-        var node = node.data(nodes);
+        /* var node = node.data(nodes);
 
         var nn = node.enter().insert('g').attr("class", "node")
             .on("mouseover", mouseover)
@@ -240,7 +240,7 @@ function Bubblecloud() {
         // .duration(500)
         // .attr("style","font-size:1.4em;")
 
-        force.start();
+        force.start(); */
     }
 
     rScale = d3.scale.log ()
@@ -251,6 +251,9 @@ function Bubblecloud() {
         .domain([0, 1])
         .range([0.25, 1]);
 }
+
+/// Viz Factory
+
 function VisualizationFactory(){
 
     this.createVisualizationObject = function(visualizationName) {
@@ -258,6 +261,51 @@ function VisualizationFactory(){
             return new Bubblecloud();
 
         return new Bubblecloud();
+    }
+
+}
+
+
+/************************** Extensions Handlers **************************/
+
+/* :::: ReSA :::: */
+
+    function ResaHandler() {
+        this.init = function() {}
+    }
+
+/************************** Extensions Handlers **************************/
+
+/* :::: Lodsafe :::: */
+
+    function LodsafeHandler() {
+        this.init = function() {
+            var lodsafe_mode = $("#lodsafe-mode");
+
+            lodsafe_mode.bootstrapSwitch({
+                'state': true,
+                'animate': true,
+                'handleWidth': 80,
+                'onColor': 'success',
+                'offColor': 'danger'
+            });
+
+            lodsafe_mode.on('switchChange.bootstrapSwitch', function(event, state) {
+                if(extParams['strict'] !== undefined)
+                    extParams.strict = state;
+            });
+        }
+    }
+
+////// Ext Handler Factory
+
+function ExtensionHandlerFactory(){
+
+    this.createExtensionHandlerObject = function(extName) {
+        if (extName === 'lodsafe')
+            return new LodsafeHandler();
+
+        return new ResaHandler();
     }
 
 }
@@ -296,6 +344,11 @@ function Base() {
         extParams = params;
     };
 
+    this.loadExtensionParams = function(){
+        var file = "./../params/" + extParams.name + ".html";
+        $('#extension-params').load(file);
+    };
+
     var addVisualizationTab = function (visualizations) {
         var tabAnchor = "";
         var tabContent = "";
@@ -313,10 +366,10 @@ function Base() {
         $('#content').find('div').first().addClass("active");
     };
 
-    this.setExtensionVisualizations = function(data) {
-        if(this.getExtensionParams().name !== undefined || data.params.name !== this.getExtensionParams().name)
+    this.loadExtensionVisualizations = function(extName) {
+        if(extParams.name !== undefined || extName !== extParams.name)
         {
-            addVisualizationTab(data.params.visualizations);
+            addVisualizationTab(extParams.visualizations);
             setActiveVisualizationTab();
         }
     };
@@ -325,12 +378,17 @@ function Base() {
 
 
 /************************** App  Handler **************************/
-
-$(function(){
-
    var base = new Base();
+   var extensionHandlerFactory = new ExtensionHandlerFactory();
+   var visualizationObject  = base.getCurrentVisualizationObject();
 
    var socket = io.connect(window.location.hostname);
+
+    function loadExtensionParams(extName) {
+        base.loadExtensionParams();
+        var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
+        extensionHandler.init();
+    }
 
     socket.on('data', function(data) {
         console.log("************* Data: " + JSON.stringify(data));
@@ -347,9 +405,11 @@ $(function(){
         updateTwitterStream(data.watchList);
 
         base.setExtensionParams(data.params);
-        base.setExtensionVisualizations(data);
 
-        var visualizationObject  = base.getCurrentVisualizationObject();
+        loadExtensionParams(data.params.name);
+
+        base.loadExtensionVisualizations(data.params.name);
+
         //Main Panel (Viz)
         visualizationObject.updateVisualization(data.watchList, params);
 
@@ -449,27 +509,3 @@ $(function(){
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
         process_button.removeClass('btn-success').addClass('btn-warning').attr('title','pause').addClass('animated bounceIn').attr('onclick','pauseAnalyzing();');
     }
-});
-
-/************************** Extensions Handlers **************************/
-
-/* :::: Lodsafe :::: */
-
-$(function(){
-
-    var lodsafe_mode = $("#lodsafe-mode");
-
-    lodsafe_mode.bootstrapSwitch({
-        'state': true,
-        'animate': true,
-        'handleWidth': 80,
-        'onColor': 'success',
-        'offColor': 'danger'
-    });
-
-    lodsafe_mode.on('switchChange.bootstrapSwitch', function(event, state) {
-        if(extParams['strict'] !== undefined)
-            extParams.strict = state;
-    });
-
-});

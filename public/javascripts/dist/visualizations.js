@@ -251,3 +251,16 @@ function Bubblecloud() {
         .domain([0, 1])
         .range([0.25, 1]);
 }
+
+/// Viz Factory
+
+function VisualizationFactory(){
+
+    this.createVisualizationObject = function(visualizationName) {
+        if (visualizationName === 'bubblecloud')
+            return new Bubblecloud();
+
+        return new Bubblecloud();
+    }
+
+}

@@ -1,3 +1,6 @@
+
+/// Viz Factory
+
 function VisualizationFactory(){
 
     this.createVisualizationObject = function(visualizationName) {
