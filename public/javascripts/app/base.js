@@ -24,6 +24,10 @@ function Base() {
         return glob_paused;
     };
 
+    this.setGlobPaused = function (value) {
+        glob_paused = value;
+    };
+
     this.getExtensionParams = function() {
         return extParams;
     };
@@ -32,8 +36,8 @@ function Base() {
         extParams = params;
     };
 
-    this.loadExtensionParams = function(){
-        var file = "./../params/" + extParams.name + ".html";
+    this.loadExtensionParams = function(extName){
+        var file = "./../params/" + extName + ".html";
         $('#extension-params').load(file);
     };
 

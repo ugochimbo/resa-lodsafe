@@ -10,5 +10,6 @@ function Visualizations() {
 }
 
 Visualizations.prototype = {
-    updateVisualization: function (data) {}
+    updateVisualization: function (data) {},
+    remove: function() {}
 };

@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 var extensionFactory = new ExtensionFactory();
-var ext = extensionFactory.initObject('lodsafe');
+var ext = extensionFactory.initObject('resa');
 
 //We're using bower components so add it to the path to make things easier
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));

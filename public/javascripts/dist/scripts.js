@@ -10,7 +10,8 @@ function Visualizations() {
 }
 
 Visualizations.prototype = {
-    updateVisualization: function (data) {}
+    updateVisualization: function (data) {},
+    remove: function() {}
 };
 
 /********************************** Visualizations  *********************************/
@@ -125,6 +126,10 @@ function Bubblecloud() {
         }
 
       //  restart();
+    };
+
+    this.remove = function(){
+        d3.select("#bubblecloud svg").selectAll('g').remove();
     };
 
     function mouseover() {
@@ -336,6 +341,10 @@ function Base() {
         return glob_paused;
     };
 
+    this.setGlobPaused = function (value) {
+        glob_paused = value;
+    };
+
     this.getExtensionParams = function() {
         return extParams;
     };
@@ -344,8 +353,8 @@ function Base() {
         extParams = params;
     };
 
-    this.loadExtensionParams = function(){
-        var file = "./../params/" + extParams.name + ".html";
+    this.loadExtensionParams = function(extName){
+        var file = "./../params/" + extName + ".html";
         $('#extension-params').load(file);
     };
 
@@ -385,10 +394,15 @@ function Base() {
    var socket = io.connect(window.location.hostname);
 
     function loadExtensionParams(extName) {
-        base.loadExtensionParams();
+        base.loadExtensionParams(extName);
         var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
         extensionHandler.init();
     }
+
+    $("#extensions-list").on( "change", function() {
+        var selected =  $("#extensions-list").find("option:selected").attr('value');
+        loadExtensionParams(selected);
+    });
 
     socket.on('data', function(data) {
         console.log("************* Data: " + JSON.stringify(data));
@@ -421,13 +435,9 @@ function Base() {
     });
 
     socket.on('pause', function(data) {
-        glob_paused=1;
+        base.setGlobPaused(1);
         pauseAnalyzing();
     });
-
-    var setExtensionParams = function (params) {
-        extParams = params;
-    };
 
     function updateTwitterStream(data)
     {
@@ -454,16 +464,16 @@ function Base() {
          var slug_text = '';*/
         $('#symbols_no').html(params.symbols_no).addClass("animated bounceIn");
         $('#tweets_no').html(data.tweets_no).addClass("animated bounceIn");
-        if(data.tweets_no>0 && !glob_paused){
+        if(data.tweets_no>0 && !base.getGlobPaused()){
             establishPauseMode();
         }else{
-            glob_paused=0;
+            base.setGlobPaused(0);
         }
     }
 
     function startAnalyzing(){
-        glob_paused=0;
-        var terms=$('#keyword').val();
+        base.setGlobPaused(0);
+        var terms = $('#keyword').val();
         if(!$.trim(terms)){
             return 0;
         }
@@ -471,7 +481,7 @@ function Base() {
         var socket2 = io.connect(window.location.hostname);
         var data = {
             keywords : terms.split(','),
-            extParams      : extParams
+            extParams : base.getExtensionParams()
         };
         socket2.emit('startA', data);
     }
@@ -482,7 +492,7 @@ function Base() {
         socket2.emit('stopA', {});
         setTimeout(function(){
             socket2.emit('removeAll', {});
-            d3.select("#bubblecloud svg").selectAll('g').remove();
+            visualizationObject.remove();
             $('#tweets').empty();
         },1000);
 
@@ -491,6 +501,7 @@ function Base() {
         process_button.find('i').removeClass('glyphicon-pause').addClass('glyphicon-play');
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
     }
+
     function pauseAnalyzing(){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('pauseA', {});

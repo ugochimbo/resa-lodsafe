@@ -10,7 +10,8 @@ function Visualizations() {
 }
 
 Visualizations.prototype = {
-    updateVisualization: function (data) {}
+    updateVisualization: function (data) {},
+    remove: function() {}
 };
 
 /********************************** Visualizations  *********************************/
@@ -125,6 +126,10 @@ function Bubblecloud() {
         }
 
       //  restart();
+    };
+
+    this.remove = function(){
+        d3.select("#bubblecloud svg").selectAll('g').remove();
     };
 
     function mouseover() {
