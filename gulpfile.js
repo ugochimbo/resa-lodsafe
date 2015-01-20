@@ -14,26 +14,26 @@ var distDir = javascriptsDir + 'dist/';
 var visualizationsDir = "public/javascripts/visualizations/";
 var visualizations = [
                         visualizationsDir + 'visualizations.js',
-                        visualizationsDir + 'bubblecloud.js'
+                        visualizationsDir + 'bubblecloud.js',
+                        visualizationsDir + 'factory/visualizationfactory.js'
                 ];
 
 var extensionsHandler = [
                     extensionsHandlerDir + 'resaHandler.js',
-                    extensionsHandlerDir + 'lodsafeHandler.js'
+                    extensionsHandlerDir + 'lodsafeHandler.js',
+                    extensionsDir + 'factory/extensionsHandlerFactory.js'
                ];
 
 var scripts = [
     javascriptsDir + 'dist/visualizations.js',
-    visualizationsDir + 'factory/visualizationfactory.js',
-    javascriptsDir + 'dist/extensionsHandler.js',
-    extensionsDir + 'factory/extensionsHandlerFactory.js',
+    javascriptsDir + 'dist/extensionshandler.js',
     javascriptsDir + 'app/base.js',
     javascriptsDir + 'app/appHandler.js'
 ];
 
 gulp.task('extensionsHandler', function () {
     return gulp.src(extensionsHandler)
-        .pipe(concat('extensionsHandler.js'))
+        .pipe(concat('extensionshandler.js'))
         .pipe(gulp.dest(distDir))
         .pipe(notify({ message: 'Finished Concatenating Extensions Handler'}));
 });
