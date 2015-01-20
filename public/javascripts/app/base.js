@@ -32,6 +32,11 @@ function Base() {
         extParams = params;
     };
 
+    this.loadExtensionParams = function(){
+        var file = "./../params/" + extParams.name + ".html";
+        $('#extension-params').load(file);
+    };
+
     var addVisualizationTab = function (visualizations) {
         var tabAnchor = "";
         var tabContent = "";
@@ -49,10 +54,10 @@ function Base() {
         $('#content').find('div').first().addClass("active");
     };
 
-    this.setExtensionVisualizations = function(data) {
-        if(this.getExtensionParams().name !== undefined || data.params.name !== this.getExtensionParams().name)
+    this.loadExtensionVisualizations = function(extName) {
+        if(extParams.name !== undefined || extName !== extParams.name)
         {
-            addVisualizationTab(data.params.visualizations);
+            addVisualizationTab(extParams.visualizations);
             setActiveVisualizationTab();
         }
     };
