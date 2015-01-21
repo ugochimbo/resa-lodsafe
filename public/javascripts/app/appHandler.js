@@ -5,8 +5,6 @@
    var extensionHandlerFactory = new ExtensionHandlerFactory();
    var visualizationObject  = base.getCurrentVisualizationObject();
 
-   var socket = io.connect(window.location.hostname);
-
     function loadExtensionParams(extName) {
         base.loadExtensionParams(extName);
         var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
@@ -15,43 +13,21 @@
 
     $("#extensions-list").on( "change", function() {
         var selected =  $("#extensions-list").find("option:selected").attr('value');
-        loadExtensionParams(selected);
-    });
-
-    socket.on('data', function(data) {
-        console.log("************* Data: " + JSON.stringify(data));
-
-        var params = {
-            total: data.total,
-            symbols_no: Object.keys(data.watchList.symbols).length,
-            max_ent:  400
+        var socket2 = io.connect(window.location.hostname);
+        var data = {
+            extParams : {name : selected}
         };
-
-        updateTopPanelInfo(data.watchList, params);
-
-        //Right Panel (Tweet Stream)
-        updateTwitterStream(data.watchList);
-
-        base.setExtensionParams(data.params);
-
-        loadExtensionParams(data.params.name);
-
-        base.loadExtensionVisualizations(data.params.name);
-
-        //Main Panel (Viz)
-        visualizationObject.updateVisualization(data.watchList, params);
-
-        $('#last-update').text(new Date().toTimeString());
+        socket2.emit('extChange', data);
     });
 
-    socket.on('stop', function(data) {
-        stopAnalyzing();
-    });
-
-    socket.on('pause', function(data) {
-        base.setGlobPaused(1);
-        pauseAnalyzing();
-    });
+    function initExtensionParams(data) {
+        if(JSON.stringify(base.getExtensionParams()) === '{}' || base.getExtensionParams().name !== data.params.name){
+            base.removeVisualizations();
+            base.setExtensionParams(data.params);
+            loadExtensionParams(data.params.name);
+            base.loadExtensionVisualizations(data.params.name);
+        }
+    }
 
     function updateTwitterStream(data)
     {
@@ -134,3 +110,41 @@
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
         process_button.removeClass('btn-success').addClass('btn-warning').attr('title','pause').addClass('animated bounceIn').attr('onclick','pauseAnalyzing();');
     }
+
+    //************ Sockets *************//
+
+
+    var socket = io.connect(window.location.hostname);
+
+    socket.on('data', function(data) {
+
+        console.log("************* Data: " + JSON.stringify(data));
+
+        initExtensionParams(data);
+
+        var params = {
+            total: data.total,
+            symbols_no: Object.keys(data.watchList.symbols).length,
+            max_ent:  400
+        };
+
+        updateTopPanelInfo(data.watchList, params);
+
+        //Right Panel (Tweet Stream)
+        updateTwitterStream(data.watchList);
+
+        //Main Panel (Viz)
+
+        visualizationObject.updateVisualization(data.watchList, params);
+
+        $('#last-update').text(new Date().toTimeString());
+    });
+
+    socket.on('stop', function(data) {
+        stopAnalyzing();
+    });
+
+    socket.on('pause', function(data) {
+        base.setGlobPaused(1);
+        pauseAnalyzing();
+    });
