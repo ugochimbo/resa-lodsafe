@@ -89,6 +89,10 @@ sockets.sockets.on('connection', function(socket) {
     socket.on('removeAll', function(data) {
         ext.emptyWatchList();
     });
+    socket.on('extChange', function(data) {
+        ext = extensionFactory.initObject(data.extParams.name);
+        socket.emit('data', ext.output());
+    });
     socket.on('error', function(error) {
         console.log("Error coming from socket!", error.message);
     });
