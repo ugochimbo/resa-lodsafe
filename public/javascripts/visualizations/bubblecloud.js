@@ -30,13 +30,13 @@ function Bubblecloud() {
 
     this.foci_category = function(entity_type){
         if(entity_type=='Person'){
-            return foci[0];
+            return this.foci[0];
         }else if(entity_type=='Place'){
-            return foci[1];
+            return this.foci[1];
         }else if(entity_type=='Organization'){
-            return foci[2];
+            return this.foci[2];
         }else{
-            return foci[3];
+            return this.foci[3];
         }
     };
     /*
@@ -62,7 +62,7 @@ function Bubblecloud() {
         .gravity(0.18)
         .charge(-360)
         .friction(0.94)
-        .on("tick", tick);
+        .on("tick", this.tick);
 
     this.svg = d3.select("#bubblecloud").append("svg")
         .attr("width", this.width)
@@ -83,41 +83,41 @@ function Bubblecloud() {
             if (isNaN(val)) {
                 val = 0;
             }
-            slug_text=convertToSlug(key);
+            slug_text = convertToSlug(key);
             //console.log(d3.select("#bubblecloud svg").selectAll('.node'));
 
             //Add New Bubble
             if(!d3.select("#bubblecloud svg").selectAll('.node-circle[id="' + slug_text + '"]').size()){
-                var start_x= this.width/2;
-                var start_y= this.height/2;
+                var start_x = this.width/2;
+                var start_y = this.height/2;
                 if(this.one_node_already_inserted>0){
                     //prevent collision
-                    start_y=start_y-(this.one_node_already_inserted*15);
+                    start_y = start_y-(this.one_node_already_inserted*15);
                 }
                 //var category=Math.floor(20*Math.random());
-                var c_size=rScale(data.symbols[key].count);
-                var uri=data.symbols[key].uri;
+                var c_size = rScale(data.symbols[key].count);
+                var uri = data.symbols[key].uri;
                 var node = {x: start_x, y:start_y, name:key,n_weight:data.symbols[key].count, category:data.symbols[key].type, r:c_size, proportion:val,slug_text:slug_text,uri:uri},
-                    n = nodes.push(node);
+                    n = this.nodes.push(node);
                 this.one_node_already_inserted++;
             }
             else{
                 //Update Existing Bubble
-                var new_size=rScale(data.symbols[key].count);
+                var new_size = rScale(data.symbols[key].count);
                 if(d3.select("#bubblecloud svg").select('.node-circle[id="' + slug_text + '"]').attr('r')!=new_size){
                     d3.select("#bubblecloud svg").select('.node-circle[id="' + slug_text + '"]').attr('r',new_size/2).transition().duration(700).attr('r',new_size);
                 }
             }
         }
 
-      //  restart();
+        this.restart();
     };
 
     this.remove = function(){
         d3.select("#bubblecloud svg").selectAll('g').remove();
     };
 
-    function mouseover() {
+    this.mouseover = function () {
         d3.select(this).select("circle")
             .style("stroke-width", 3);
         //d3.select(this).select("text").attr("opacity", 0.9);
@@ -154,17 +154,18 @@ function Bubblecloud() {
             var id=convertToSlug($(this).text());
             d3.select("#bubblecloud svg").selectAll('#t_'+id).attr('opacity',0);
         });
-    }
+    };
 
-    function mouseout() {
+    this.mouseout = function() {
         if(! d3.select(this).classed('node-selected')){
             d3.select(this).select("circle")
                 .style("stroke-width", 1);
             d3.select(tdhis).select("text").attr("opacity", 0);
         }
         $('.popover').remove();
-    }
-    function mousedown() {
+    };
+
+    this.mousedown = function() {
         if(! d3.select(this).classed('node-selected')){
             d3.select(this).select("circle")
                 .style("stroke-width", 3);
@@ -181,32 +182,35 @@ function Bubblecloud() {
             d3.select(this).select("text").attr("opacity", 0);
         }
 
-    }
-    function tick(e) {
+    };
+
+    this.tick = function(e) {
         /*        node.attr("transform", function(d) { return "translate(" + d.x  + "," + d.y+ ")"; }); */
         var k = .1 * e.alpha;
+        var _this = this;
 
         // Push nodes toward their designated focus.
-        nodes.forEach(function(o, i) {
-            o.y += (foci_category(o.category).y - o.y) * k;
-            o.x += (foci_category(o.category).x - o.x) * k;
+        this.nodes.forEach(function(o, i) {
+            o.y += (_this.foci_category(o.category).y - o.y) * k;
+            o.x += (_this.foci_category(o.category).x - o.x) * k;
         });
 
-        node.select('circle')
+        this.node.select('circle')
             .attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; });
-        node.select('text')
+        this.node.select('text')
             .attr("x", function(d) { return d.x; })
             .attr("y", function(d) { return d.y; });
-    }
-    function restart() {
-        /* var node = node.data(nodes);
+    };
+
+   this.restart =  function () {
+        var node = this.node.data(this.nodes);
 
         var nn = node.enter().insert('g').attr("class", "node")
-            .on("mouseover", mouseover)
-            .on("mouseout", mouseout)
-            .on("mousedown", mousedown)
-            .call(force.drag);
+            .on("mouseover", this.mouseover)
+            .on("mouseout", this.mouseout)
+            .on("mousedown", this.mousedown)
+            .call(this.force.drag);
         var c_added = nn.append("circle")
             .attr("id",function(d){return d.slug_text;})
             .attr("class", "node-circle")
@@ -230,8 +234,8 @@ function Bubblecloud() {
         // .duration(500)
         // .attr("style","font-size:1.4em;")
 
-        force.start(); */
-    }
+        this.force.start();
+    };
 
     rScale = d3.scale.log ()
         .domain([1, 1000])

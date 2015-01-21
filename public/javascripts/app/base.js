@@ -41,6 +41,11 @@ function Base() {
         $('#extension-params').load(file);
     };
 
+    this.removeVisualizations = function (){
+        $('#visualizations').empty();
+        $('#content').empty();
+    };
+
     var addVisualizationTab = function (visualizations) {
         var tabAnchor = "";
         var tabContent = "";
