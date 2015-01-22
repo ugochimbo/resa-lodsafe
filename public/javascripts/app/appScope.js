@@ -1,7 +1,7 @@
 
-/************************** App Base Object **************************/
+/************************** App Scope Object **************************/
 
-function Base() {
+function AppScope() {
     var glob_paused=0;
     var extParams = {};
 
