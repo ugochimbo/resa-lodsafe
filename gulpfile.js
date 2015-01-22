@@ -28,7 +28,9 @@ var scripts = [
     javascriptsDir + 'dist/visualizations.js',
     javascriptsDir + 'dist/extensionshandler.js',
     javascriptsDir + 'app/appScope.js',
-    javascriptsDir + 'app/appHandler.js'
+    javascriptsDir + 'app/appHandler.js',
+    javascriptsDir + 'app/domEvents.js',
+    javascriptsDir + 'app/socketEvents.js',
 ];
 
 gulp.task('extensionsHandler', function () {
