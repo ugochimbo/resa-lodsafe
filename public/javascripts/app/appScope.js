@@ -5,6 +5,23 @@ function AppScope() {
     var glob_paused=0;
     var extParams = {};
 
+    var addVisualizationTab = function (visualizations) {
+        var tabAnchor = "";
+        var tabContent = "";
+        for (var index = 0; index < visualizations.length; ++index) {
+            tabAnchor += '<li> <a data-toggle="tab" href="#' + visualizations[index].name +'">' + visualizations[index].title +'</a></li>';
+            tabContent += '<div id="' + visualizations[index].name + '" class="tab-pane"></div>';
+        }
+
+        $('#visualizations').append(tabAnchor);
+        $('#content').append(tabContent);
+    };
+
+    var setActiveVisualizationTab = function (){
+        $('#visualizations').find('li').first().addClass("active");
+        $('#content').find('div').first().addClass("active");
+    };
+
     this.getCurrentVisualizationName = function () {
         /*if(extParams.param.length > 1)
          return $( ".selector" ).tabs( "option", "active" ).attr( 'id' );
@@ -44,23 +61,6 @@ function AppScope() {
     this.removeVisualizations = function (){
         $('#visualizations').empty();
         $('#content').empty();
-    };
-
-    var addVisualizationTab = function (visualizations) {
-        var tabAnchor = "";
-        var tabContent = "";
-        for (var index = 0; index < visualizations.length; ++index) {
-            tabAnchor += '<li> <a data-toggle="tab" href="#' + visualizations[index].name +'">' + visualizations[index].title +'</a></li>';
-            tabContent += '<div id="' + visualizations[index].name + '" class="tab-pane"></div>';
-        }
-
-        $('#visualizations').append(tabAnchor);
-        $('#content').append(tabContent);
-    };
-
-    var setActiveVisualizationTab = function (){
-        $('#visualizations').find('li').first().addClass("active");
-        $('#content').find('div').first().addClass("active");
     };
 
     this.loadExtensionVisualizations = function(extName) {
