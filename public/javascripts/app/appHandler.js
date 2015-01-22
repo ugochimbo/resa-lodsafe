@@ -1,12 +1,12 @@
 
 
 /************************** App  Handler **************************/
-   var base = new Base();
+   var $appScope = new AppScope();
    var extensionHandlerFactory = new ExtensionHandlerFactory();
-   var visualizationObject  = base.getCurrentVisualizationObject();
+   var visualizationObject  = $appScope.getCurrentVisualizationObject();
 
     function loadExtensionParams(extName) {
-        base.loadExtensionParams(extName);
+        $appScope.loadExtensionParams(extName);
         var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
         extensionHandler.init();
     }
@@ -21,11 +21,11 @@
     });
 
     function initExtensionParams(data) {
-        if(JSON.stringify(base.getExtensionParams()) === '{}' || base.getExtensionParams().name !== data.params.name){
-            base.removeVisualizations();
-            base.setExtensionParams(data.params);
+        if(JSON.stringify($appScope.getExtensionParams()) === '{}' || $appScope.getExtensionParams().name !== data.params.name){
+            $appScope.removeVisualizations();
+            $appScope.setExtensionParams(data.params);
             loadExtensionParams(data.params.name);
-            base.loadExtensionVisualizations(data.params.name);
+            $appScope.loadExtensionVisualizations(data.params.name);
         }
     }
 
@@ -54,15 +54,15 @@
          var slug_text = '';*/
         $('#symbols_no').html(params.symbols_no).addClass("animated bounceIn");
         $('#tweets_no').html(data.tweets_no).addClass("animated bounceIn");
-        if(data.tweets_no>0 && !base.getGlobPaused()){
+        if(data.tweets_no>0 && !$appScope.getGlobPaused()){
             establishPauseMode();
         }else{
-            base.setGlobPaused(0);
+            $appScope.setGlobPaused(0);
         }
     }
 
     function startAnalyzing(){
-        base.setGlobPaused(0);
+        $appScope.setGlobPaused(0);
         var terms = $('#keyword').val();
         if(!$.trim(terms)){
             return 0;
@@ -71,7 +71,7 @@
         var socket2 = io.connect(window.location.hostname);
         var data = {
             keywords : terms.split(','),
-            extParams : base.getExtensionParams()
+            extParams : $appScope.getExtensionParams()
         };
         socket2.emit('startA', data);
     }
@@ -145,6 +145,6 @@
     });
 
     socket.on('pause', function(data) {
-        base.setGlobPaused(1);
+        $appScope.setGlobPaused(1);
         pauseAnalyzing();
     });
