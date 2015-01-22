@@ -1,35 +1,45 @@
 
+/************************** App Handler **************************/
 
-/************************** App  Handler **************************/
-   var $appScope = new AppScope();
-   var extensionHandlerFactory = new ExtensionHandlerFactory();
-   var visualizationObject  = $appScope.getCurrentVisualizationObject();
+function AppHandler(){
 
-    function loadExtensionParams(extName) {
+    var $appScope = new AppScope();
+    var extensionHandlerFactory = new ExtensionHandlerFactory();
+    var visualizationObject  = $appScope.getCurrentVisualizationObject();
+
+    this.setGlobPaused = function(value){
+        $appScope.setGlobPaused(value);
+    };
+
+    this.loadExtensionParams =  function (extName) {
         $appScope.loadExtensionParams(extName);
         var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
         extensionHandler.init();
-    }
+    };
 
-    $("#extensions-list").on( "change", function() {
+    this.handleExtensionChange = function() {
         var selected =  $("#extensions-list").find("option:selected").attr('value');
         var socket2 = io.connect(window.location.hostname);
         var data = {
             extParams : {name : selected}
         };
         socket2.emit('extChange', data);
-    });
+    };
 
-    function initExtensionParams(data) {
+    this.initExtensionParams = function (data) {
         if(JSON.stringify($appScope.getExtensionParams()) === '{}' || $appScope.getExtensionParams().name !== data.params.name){
             $appScope.removeVisualizations();
             $appScope.setExtensionParams(data.params);
-            loadExtensionParams(data.params.name);
+            this.loadExtensionParams(data.params.name);
             $appScope.loadExtensionVisualizations(data.params.name);
         }
-    }
+    };
 
-    function updateTwitterStream(data)
+    this.updateVisualization = function (watchList, params){
+        visualizationObject.updateVisualization(watchList, params);
+    };
+
+    this.updateTwitterStream = function (data)
     {
         $('#hashtag').html(' (#'+data.search_for.join()+')').addClass("animated bounceIn");
         $('.tweet').removeClass('animated').removeClass('flash');
@@ -41,12 +51,12 @@
             v.text+'</div>')
                 .linkify({target: '_blank'});
         });
-    }
+    };
 
-    function updateTopPanelInfo(data, params)
+    this.updateTopPanelInfo = function (data, params)
     {
         if(params.symbols_no > params.max_ent){
-            pauseAnalyzing();
+            this.pauseAnalyzing();
             alert('The demo is limited to '+max_ent+' entities! contact us for more info: khalili@informatik.uni-leipzig.de');
         }
 
@@ -54,29 +64,30 @@
          var slug_text = '';*/
         $('#symbols_no').html(params.symbols_no).addClass("animated bounceIn");
         $('#tweets_no').html(data.tweets_no).addClass("animated bounceIn");
-        if(data.tweets_no>0 && !$appScope.getGlobPaused()){
-            establishPauseMode();
-        }else{
-            $appScope.setGlobPaused(0);
-        }
-    }
 
-    function startAnalyzing(){
+        if(data.tweets_no>0 && !$appScope.getGlobPaused()){
+            this.establishPauseMode();
+        }else{
+            this.setGlobPaused(0);
+        }
+    };
+
+    this.startAnalyzing = function (){
         $appScope.setGlobPaused(0);
         var terms = $('#keyword').val();
         if(!$.trim(terms)){
             return 0;
         }
-        establishPauseMode();
+        this.establishPauseMode();
         var socket2 = io.connect(window.location.hostname);
         var data = {
             keywords : terms.split(','),
             extParams : $appScope.getExtensionParams()
         };
         socket2.emit('startA', data);
-    }
+    };
 
-    function stopAnalyzing(){
+    this.stopAnalyzing = function (){
         $('#reset_btn').addClass('animated bounceIn');
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('stopA', {});
@@ -90,9 +101,9 @@
 
         process_button.find('i').removeClass('glyphicon-pause').addClass('glyphicon-play');
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
-    }
+    };
 
-    function pauseAnalyzing(){
+    this.pauseAnalyzing = function (){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('pauseA', {});
 
@@ -100,51 +111,19 @@
 
         process_button.find('i').removeClass('glyphicon-pause').addClass('glyphicon-play');
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
-    }
-    function removeAllEntities(){
+    };
+
+    this.removeAllEntities = function (){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('removeAll', {});
-    }
-    function establishPauseMode(){
+    };
+
+    this.establishPauseMode = function (){
         var process_button = $('#process_btn');
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
         process_button.removeClass('btn-success').addClass('btn-warning').attr('title','pause').addClass('animated bounceIn').attr('onclick','pauseAnalyzing();');
-    }
+    };
 
-    //************ Sockets *************//
+}
 
-
-    var socket = io.connect(window.location.hostname);
-
-    socket.on('data', function(data) {
-
-        console.log("************* Data: " + JSON.stringify(data));
-
-        initExtensionParams(data);
-
-        var params = {
-            total: data.total,
-            symbols_no: Object.keys(data.watchList.symbols).length,
-            max_ent:  400
-        };
-
-        updateTopPanelInfo(data.watchList, params);
-
-        //Right Panel (Tweet Stream)
-        updateTwitterStream(data.watchList);
-
-        //Main Panel (Viz)
-
-        visualizationObject.updateVisualization(data.watchList, params);
-
-        $('#last-update').text(new Date().toTimeString());
-    });
-
-    socket.on('stop', function(data) {
-        stopAnalyzing();
-    });
-
-    socket.on('pause', function(data) {
-        $appScope.setGlobPaused(1);
-        pauseAnalyzing();
-    });
+var appHandler = new AppHandler();
