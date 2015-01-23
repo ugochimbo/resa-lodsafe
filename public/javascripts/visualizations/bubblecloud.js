@@ -18,6 +18,7 @@ function Bubblecloud() {
             return '#fdf8ca';
         }
     };
+
     //clustering point
     this.cluster_padding_x = this.width/4;
     this.cluster_padding_y = this.height/4;
