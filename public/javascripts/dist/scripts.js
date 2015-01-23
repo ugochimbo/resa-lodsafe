@@ -33,6 +33,7 @@ function Bubblecloud() {
             return '#fdf8ca';
         }
     };
+
     //clustering point
     this.cluster_padding_x = this.width/4;
     this.cluster_padding_y = this.height/4;
@@ -320,11 +321,28 @@ function ExtensionHandlerFactory(){
 }
 
 
-/************************** App Base Object **************************/
+/************************** App Scope Object **************************/
 
-function Base() {
+function AppScope() {
     var glob_paused=0;
     var extParams = {};
+
+    var addVisualizationTab = function (visualizations) {
+        var tabAnchor = "";
+        var tabContent = "";
+        for (var index = 0; index < visualizations.length; ++index) {
+            tabAnchor += '<li> <a data-toggle="tab" href="#' + visualizations[index].name +'">' + visualizations[index].title +'</a></li>';
+            tabContent += '<div id="' + visualizations[index].name + '" class="tab-pane"></div>';
+        }
+
+        $('#visualizations').append(tabAnchor);
+        $('#content').append(tabContent);
+    };
+
+    var setActiveVisualizationTab = function (){
+        $('#visualizations').find('li').first().addClass("active");
+        $('#content').find('div').first().addClass("active");
+    };
 
     this.getCurrentVisualizationName = function () {
         /*if(extParams.param.length > 1)
@@ -367,23 +385,6 @@ function Base() {
         $('#content').empty();
     };
 
-    var addVisualizationTab = function (visualizations) {
-        var tabAnchor = "";
-        var tabContent = "";
-        for (var index = 0; index < visualizations.length; ++index) {
-            tabAnchor += '<li> <a data-toggle="tab" href="#' + visualizations[index].name +'">' + visualizations[index].title +'</a></li>';
-            tabContent += '<div id="' + visualizations[index].name + '" class="tab-pane"></div>';
-        }
-
-        $('#visualizations').append(tabAnchor);
-        $('#content').append(tabContent);
-    };
-
-    var setActiveVisualizationTab = function (){
-        $('#visualizations').find('li').first().addClass("active");
-        $('#content').find('div').first().addClass("active");
-    };
-
     this.loadExtensionVisualizations = function(extName) {
         if(extParams.name !== undefined || extName !== extParams.name)
         {
@@ -394,37 +395,47 @@ function Base() {
 
 }
 
+/************************** App Handler **************************/
 
-/************************** App  Handler **************************/
-   var base = new Base();
-   var extensionHandlerFactory = new ExtensionHandlerFactory();
-   var visualizationObject  = base.getCurrentVisualizationObject();
+function AppHandler(){
 
-    function loadExtensionParams(extName) {
-        base.loadExtensionParams(extName);
+    var $appScope = new AppScope();
+    var extensionHandlerFactory = new ExtensionHandlerFactory();
+    var visualizationObject  = $appScope.getCurrentVisualizationObject();
+
+    this.setGlobPaused = function(value){
+        $appScope.setGlobPaused(value);
+    };
+
+    this.loadExtensionParams =  function (extName) {
+        $appScope.loadExtensionParams(extName);
         var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
         extensionHandler.init();
-    }
+    };
 
-    $("#extensions-list").on( "change", function() {
+    this.handleExtensionChange = function() {
         var selected =  $("#extensions-list").find("option:selected").attr('value');
         var socket2 = io.connect(window.location.hostname);
         var data = {
             extParams : {name : selected}
         };
         socket2.emit('extChange', data);
-    });
+    };
 
-    function initExtensionParams(data) {
-        if(JSON.stringify(base.getExtensionParams()) === '{}' || base.getExtensionParams().name !== data.params.name){
-            base.removeVisualizations();
-            base.setExtensionParams(data.params);
-            loadExtensionParams(data.params.name);
-            base.loadExtensionVisualizations(data.params.name);
+    this.initExtensionParams = function (data) {
+        if(JSON.stringify($appScope.getExtensionParams()) === '{}' || $appScope.getExtensionParams().name !== data.params.name){
+            $appScope.removeVisualizations();
+            $appScope.setExtensionParams(data.params);
+            this.loadExtensionParams(data.params.name);
+            $appScope.loadExtensionVisualizations(data.params.name);
         }
-    }
+    };
 
-    function updateTwitterStream(data)
+    this.updateVisualization = function (watchList, params){
+        visualizationObject.updateVisualization(watchList, params);
+    };
+
+    this.updateTwitterStream = function (data)
     {
         $('#hashtag').html(' (#'+data.search_for.join()+')').addClass("animated bounceIn");
         $('.tweet').removeClass('animated').removeClass('flash');
@@ -436,12 +447,12 @@ function Base() {
             v.text+'</div>')
                 .linkify({target: '_blank'});
         });
-    }
+    };
 
-    function updateTopPanelInfo(data, params)
+    this.updateTopPanelInfo = function (data, params)
     {
         if(params.symbols_no > params.max_ent){
-            pauseAnalyzing();
+            this.pauseAnalyzing();
             alert('The demo is limited to '+max_ent+' entities! contact us for more info: khalili@informatik.uni-leipzig.de');
         }
 
@@ -449,29 +460,30 @@ function Base() {
          var slug_text = '';*/
         $('#symbols_no').html(params.symbols_no).addClass("animated bounceIn");
         $('#tweets_no').html(data.tweets_no).addClass("animated bounceIn");
-        if(data.tweets_no>0 && !base.getGlobPaused()){
-            establishPauseMode();
-        }else{
-            base.setGlobPaused(0);
-        }
-    }
 
-    function startAnalyzing(){
-        base.setGlobPaused(0);
+        if(data.tweets_no>0 && !$appScope.getGlobPaused()){
+            this.establishPauseMode();
+        }else{
+            this.setGlobPaused(0);
+        }
+    };
+
+    this.startAnalyzing = function (){
+        $appScope.setGlobPaused(0);
         var terms = $('#keyword').val();
         if(!$.trim(terms)){
             return 0;
         }
-        establishPauseMode();
+        this.establishPauseMode();
         var socket2 = io.connect(window.location.hostname);
         var data = {
             keywords : terms.split(','),
-            extParams : base.getExtensionParams()
+            extParams : $appScope.getExtensionParams()
         };
         socket2.emit('startA', data);
-    }
+    };
 
-    function stopAnalyzing(){
+    this.stopAnalyzing = function (){
         $('#reset_btn').addClass('animated bounceIn');
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('stopA', {});
@@ -485,9 +497,9 @@ function Base() {
 
         process_button.find('i').removeClass('glyphicon-pause').addClass('glyphicon-play');
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
-    }
+    };
 
-    function pauseAnalyzing(){
+    this.pauseAnalyzing = function (){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('pauseA', {});
 
@@ -495,51 +507,78 @@ function Base() {
 
         process_button.find('i').removeClass('glyphicon-pause').addClass('glyphicon-play');
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
-    }
-    function removeAllEntities(){
+    };
+
+    this.removeAllEntities = function (){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('removeAll', {});
-    }
-    function establishPauseMode(){
+    };
+
+    this.establishPauseMode = function (){
         var process_button = $('#process_btn');
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
         process_button.removeClass('btn-success').addClass('btn-warning').attr('title','pause').addClass('animated bounceIn').attr('onclick','pauseAnalyzing();');
-    }
+    };
 
-    //************ Sockets *************//
+}
+
+var appHandler = new AppHandler();
 
 
-    var socket = io.connect(window.location.hostname);
+//************ DOM Events *************//
 
-    socket.on('data', function(data) {
+//** TODO: Refactor view.. Unclean code **//
 
-        console.log("************* Data: " + JSON.stringify(data));
+function startAnalyzing(){
+    appHandler.startAnalyzing();
+}
 
-        initExtensionParams(data);
+function pauseAnalyzing() {
+   appHandler.pauseAnalyzing();
+}
 
-        var params = {
-            total: data.total,
-            symbols_no: Object.keys(data.watchList.symbols).length,
-            max_ent:  400
-        };
+function stopAnalyzing() {
+    appHandler.stopAnalyzing();
+}
 
-        updateTopPanelInfo(data.watchList, params);
+//** Extension Change **//
+$("#extensions-list").on( "change", function() {
+    appHandler.handleExtensionChange();
+});
 
-        //Right Panel (Tweet Stream)
-        updateTwitterStream(data.watchList);
 
-        //Main Panel (Viz)
 
-        visualizationObject.updateVisualization(data.watchList, params);
+//************ Sockets *************//
 
-        $('#last-update').text(new Date().toTimeString());
-    });
+var socket = io.connect(window.location.hostname);
 
-    socket.on('stop', function(data) {
-        stopAnalyzing();
-    });
+socket.on('data', function(data) {
 
-    socket.on('pause', function(data) {
-        base.setGlobPaused(1);
-        pauseAnalyzing();
-    });
+    var params = {
+        total: data.total,
+        symbols_no: Object.keys(data.watchList.symbols).length,
+        max_ent:  400
+    };
+
+    appHandler.initExtensionParams(data);
+
+    appHandler.updateTopPanelInfo(data.watchList, params);
+
+    //Right Panel (Tweet Stream)
+    appHandler.updateTwitterStream(data.watchList);
+
+    //Main Panel (Viz)
+    appHandler.updateVisualization(data.watchList, params);
+
+    $('#last-update').text(new Date().toTimeString());
+});
+
+socket.on('stop', function(data) {
+    appHandler.stopAnalyzing();
+});
+
+socket.on('pause', function(data) {
+    appHandler.setGlobPaused(1);
+    appHandler.pauseAnalyzing();
+});
+
