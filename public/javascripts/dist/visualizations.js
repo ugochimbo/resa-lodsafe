@@ -142,7 +142,7 @@ function Bubblecloud() {
                 //var category=Math.floor(20*Math.random());
                 var c_size = _this.rScale(data.symbols[key].count);
                 var uri = data.symbols[key].uri;
-                node = {
+                var new_node = {
                     x: start_x,
                     y: start_y,
                     name: key,
@@ -153,7 +153,7 @@ function Bubblecloud() {
                     slug_text: slug_text,
                     uri: uri
                 };
-                var n = nodes.push(node);
+                var n = nodes.push(new_node);
                 _this.one_node_already_inserted++;
             }
             else {
