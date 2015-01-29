@@ -10,6 +10,7 @@ function Visualizations() {
 }
 
 Visualizations.prototype = {
+    initVisualization: function(data) {},   
     updateVisualization: function (data) {},
     remove: function() {}
 };
