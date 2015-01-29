@@ -11,12 +11,14 @@ socket.on('data', function(data) {
         max_ent:  400
     };
 
-    appHandler.initExtensionParams(data);
-
     appHandler.updateTopPanelInfo(data.watchList, params);
 
     //Right Panel (Tweet Stream)
     appHandler.updateTwitterStream(data.watchList);
+
+    if(appHandler.isInitData(data)) {
+        appHandler.initExtensionParams(data);
+    }
 
     //Main Panel (Viz)
     appHandler.updateVisualization(data.watchList, params);
