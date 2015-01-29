@@ -11,6 +11,10 @@ function AppHandler(){
         $appScope.setGlobPaused(value);
     };
 
+    this.isInitData = function(data) {
+        return (JSON.stringify($appScope.getExtensionParams()) === '{}' || $appScope.getExtensionParams().name !== data.params.name);
+    };
+
     this.loadExtensionParams =  function (extName) {
         $appScope.loadExtensionParams(extName);
         var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
@@ -27,15 +31,15 @@ function AppHandler(){
     };
 
     this.initExtensionParams = function (data) {
-        if(JSON.stringify($appScope.getExtensionParams()) === '{}' || $appScope.getExtensionParams().name !== data.params.name){
+
             $appScope.removeVisualizations();
             $appScope.setExtensionParams(data.params);
             this.loadExtensionParams(data.params.name);
             $appScope.loadExtensionVisualizations(data.params.name);
-        }
     };
 
     this.updateVisualization = function (watchList, params){
+        visualizationObject.initVisualization();
         visualizationObject.updateVisualization(watchList, params);
     };
 
