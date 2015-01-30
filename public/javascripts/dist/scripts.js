@@ -1,4 +1,11 @@
 
+var $globals = {
+    'glob_paused' : 0,
+    'extParams' : {},
+    'vizData' : {}
+};
+
+
 /************************** Visualizations  Factory **************************/
 
 function Visualizations() {
@@ -12,7 +19,10 @@ function Visualizations() {
 Visualizations.prototype = {
     initVisualization: function(data) {},   
     updateVisualization: function (data) {},
-    remove: function() {}
+    remove: function() {},
+    resetGlobalVizData: function(){
+        $globals.vizData = {};
+    }
 };
 
 /********************************** Visualizations  *********************************/
@@ -99,9 +109,9 @@ function Bubblecloud() {
             this.svg.append("rect")
                 .attr("width", this.width)
                 .attr("height", this.height);
-        }
 
-        force = d3.layout.force()
+
+            force = d3.layout.force()
                 .size([this.width, this.height])
                 .nodes([{}]) // initialize with a single node
                 .links([])
@@ -110,17 +120,13 @@ function Bubblecloud() {
                 .friction(0.94)
                 .on("tick", this.tick);
 
-        nodes = force.nodes();
-        node = this.svg.selectAll(".node");
-
+            $globals.vizData = nodes = force.nodes();
+        }
     };
 
     this.updateVisualization = function(data, params) {
 
-        nodes = force.nodes();
-        node = this.svg.selectAll(".node");
-
-        console.log("All Nodes: " + node);
+        nodes = $globals.vizData;
 
         var slug_text = "";
 
@@ -135,14 +141,14 @@ function Bubblecloud() {
             if (!d3.select("#bubblecloud svg").selectAll('.node-circle[id="' + slug_text + '"]').size()) {
                 var start_x = _this.width / 2;
                 var start_y = _this.height / 2;
-                if (this.one_node_already_inserted > 0) {
+                if (_this.one_node_already_inserted > 0) {
                     //prevent collision
-                    start_y = start_y - (this.one_node_already_inserted * 15);
+                    start_y = start_y - (_this.one_node_already_inserted * 15);
                 }
                 //var category=Math.floor(20*Math.random());
                 var c_size = _this.rScale(data.symbols[key].count);
                 var uri = data.symbols[key].uri;
-                node = {
+                var new_node = {
                     x: start_x,
                     y: start_y,
                     name: key,
@@ -153,7 +159,7 @@ function Bubblecloud() {
                     slug_text: slug_text,
                     uri: uri
                 };
-                var n = nodes.push(node);
+                var n = nodes.push(new_node);
                 _this.one_node_already_inserted++;
             }
             else {
@@ -165,11 +171,14 @@ function Bubblecloud() {
             }
         }
 
+        $globals.vizData = nodes;
+
         this.restart();
     };
 
     this.remove = function(){
         d3.select("#bubblecloud svg").selectAll('g').remove();
+        this.resetGlobalVizData();
     };
 
     this.mouseover = function () {
@@ -250,9 +259,10 @@ function Bubblecloud() {
 
    this.restart =  function () {
 
-       node = node.data(nodes);
+       nodes = $globals.vizData;
 
-       console.log("Which Node is this ---> " + node);
+       node = this.svg.selectAll(".node")
+                      .data(nodes);
 
         var nn = node.enter().insert('g').attr("class", "node")
             .on("mouseover", this. mouseover)
@@ -358,8 +368,6 @@ function ExtensionHandlerFactory(){
 /************************** App Scope Object **************************/
 
 function AppScope() {
-    var glob_paused=0;
-    var extParams = {};
 
     var addVisualizationTab = function (visualizations) {
         var tabAnchor = "";
@@ -394,19 +402,19 @@ function AppScope() {
     };
 
     this.getGlobPaused = function () {
-        return glob_paused;
+        return $globals.glob_paused;
     };
 
     this.setGlobPaused = function (value) {
-        glob_paused = value;
+        $globals.glob_paused = value;
     };
 
     this.getExtensionParams = function() {
-        return extParams;
+        return $globals.extParams;
     };
 
     this.setExtensionParams = function(params){
-        extParams = params;
+        $globals.extParams = params;
     };
 
     this.loadExtensionParams = function(extName){
@@ -420,9 +428,9 @@ function AppScope() {
     };
 
     this.loadExtensionVisualizations = function(extName) {
-        if(extParams.name !== undefined || extName !== extParams.name)
+        if($globals.extParams.name !== undefined || extName !== $globals.extParams.name)
         {
-            addVisualizationTab(extParams.visualizations);
+            addVisualizationTab($globals.extParams.visualizations);
             setActiveVisualizationTab();
         }
     };
