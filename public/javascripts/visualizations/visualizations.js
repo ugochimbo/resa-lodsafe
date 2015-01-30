@@ -12,5 +12,8 @@ function Visualizations() {
 Visualizations.prototype = {
     initVisualization: function(data) {},   
     updateVisualization: function (data) {},
-    remove: function() {}
+    remove: function() {},
+    resetGlobalVizData: function(){
+        $globals.vizData = {};
+    }
 };
