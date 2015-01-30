@@ -2,8 +2,6 @@
 /************************** App Scope Object **************************/
 
 function AppScope() {
-    var glob_paused=0;
-    var extParams = {};
 
     var addVisualizationTab = function (visualizations) {
         var tabAnchor = "";
@@ -38,19 +36,19 @@ function AppScope() {
     };
 
     this.getGlobPaused = function () {
-        return glob_paused;
+        return $globals.glob_paused;
     };
 
     this.setGlobPaused = function (value) {
-        glob_paused = value;
+        $globals.glob_paused = value;
     };
 
     this.getExtensionParams = function() {
-        return extParams;
+        return $globals.extParams;
     };
 
     this.setExtensionParams = function(params){
-        extParams = params;
+        $globals.extParams = params;
     };
 
     this.loadExtensionParams = function(extName){
@@ -64,9 +62,9 @@ function AppScope() {
     };
 
     this.loadExtensionVisualizations = function(extName) {
-        if(extParams.name !== undefined || extName !== extParams.name)
+        if($globals.extParams.name !== undefined || extName !== $globals.extParams.name)
         {
-            addVisualizationTab(extParams.visualizations);
+            addVisualizationTab($globals.extParams.visualizations);
             setActiveVisualizationTab();
         }
     };
