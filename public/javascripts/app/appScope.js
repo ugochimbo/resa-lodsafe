@@ -3,6 +3,11 @@
 
 function AppScope() {
 
+    var $globals = {
+        'glob_paused' : 0,
+        'extParams' : {}
+    };
+
     var addVisualizationTab = function (visualizations) {
         var tabAnchor = "";
         var tabContent = "";
@@ -20,17 +25,8 @@ function AppScope() {
         $('#content').find('div').first().addClass("active");
     };
 
-    this.getCurrentVisualizationName = function () {
-        /*if(extParams.param.length > 1)
-         return $( ".selector" ).tabs( "option", "active" ).attr( 'id' );
-         else
-         return extParams.param;*/
-
-        return "bubblecloud";
-    };
-
     this.getCurrentVisualizationObject = function() {
-        var visualizationName = this.getCurrentVisualizationName();
+        var visualizationName = $(".tab-pane.active").attr('id');;
         var visualizationFactory = new VisualizationFactory();
         return visualizationFactory.createVisualizationObject(visualizationName);
     };
