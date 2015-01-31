@@ -26,7 +26,7 @@ function AppScope() {
     };
 
     this.getCurrentVisualizationObject = function() {
-        var visualizationName = $(".tab-pane.active").attr('id');;
+        var visualizationName = $(".tab-pane.active").attr('id');
         var visualizationFactory = new VisualizationFactory();
         return visualizationFactory.createVisualizationObject(visualizationName);
     };

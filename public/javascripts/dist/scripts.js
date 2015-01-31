@@ -12,10 +12,7 @@ function Visualizations() {
 Visualizations.prototype = {
     initVisualization: function(data) {},   
     updateVisualization: function (data) {},
-    remove: function() {},
-    resetGlobalVizData: function(){
-        $globals.vizData = {};
-    }
+    remove: function() {}
 };
 
 /********************************** Visualizations  *********************************/
@@ -165,7 +162,6 @@ function Bubblecloud() {
 
     this.remove = function(){
         d3.select("#bubblecloud svg").selectAll('g').remove();
-        this.resetGlobalVizData();
     };
 
     this.mouseover = function () {
@@ -379,7 +375,7 @@ function AppScope() {
     };
 
     this.getCurrentVisualizationObject = function() {
-        var visualizationName = $(".tab-pane.active").attr('id');;
+        var visualizationName = $(".tab-pane.active").attr('id');
         var visualizationFactory = new VisualizationFactory();
         return visualizationFactory.createVisualizationObject(visualizationName);
     };
@@ -517,7 +513,7 @@ function AppHandler(){
         socket2.emit('stopA', {});
         setTimeout(function(){
             socket2.emit('removeAll', {});
-            visualizationObject.remove();
+            $appScope.getCurrentVisualizationObject().remove();
             $('#tweets').empty();
         },1000);
 
