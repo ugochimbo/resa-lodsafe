@@ -146,7 +146,6 @@ function Bubblecloud() {
 
     this.remove = function(){
         d3.select("#bubblecloud svg").selectAll('g').remove();
-        this.resetGlobalVizData();
     };
 
     this.mouseover = function () {
