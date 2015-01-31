@@ -1,11 +1,4 @@
 
-var $globals = {
-    'glob_paused' : 0,
-    'extParams' : {},
-    'vizData' : {}
-};
-
-
 /************************** Visualizations  Factory **************************/
 
 function Visualizations() {
@@ -31,14 +24,12 @@ Visualizations.prototype = {
 
 function Bubblecloud() {
 
+    if ( arguments.callee._singletonInstance )
+        return arguments.callee._singletonInstance;
+
+    arguments.callee._singletonInstance = this;
+
     Visualizations.call(this);
-
-    /*
-        if ( arguments.callee._singletonInstance )
-            return arguments.callee._singletonInstance;
-
-        arguments.callee._singletonInstance = this;
-    */
 
     var force;
     var nodes;
@@ -101,7 +92,7 @@ function Bubblecloud() {
 
     this.initVisualization = function (){
 
-        if(d3.select("svg").node() === null) {
+        if(d3.select("#bubblecloud svg").node() === null) {
             this.svg = d3.select("#bubblecloud").append("svg")
                 .attr("width", this.width)
                 .attr("height", this.height);
@@ -120,13 +111,11 @@ function Bubblecloud() {
                 .friction(0.94)
                 .on("tick", this.tick);
 
-            $globals.vizData = nodes = force.nodes();
+            nodes = force.nodes();
         }
     };
 
     this.updateVisualization = function(data, params) {
-
-        nodes = $globals.vizData;
 
         var slug_text = "";
 
@@ -170,8 +159,6 @@ function Bubblecloud() {
                 }
             }
         }
-
-        $globals.vizData = nodes;
 
         this.restart();
     };
@@ -259,8 +246,6 @@ function Bubblecloud() {
 
    this.restart =  function () {
 
-       nodes = $globals.vizData;
-
        node = this.svg.selectAll(".node")
                       .data(nodes);
 
@@ -305,6 +290,8 @@ function Bubblecloud() {
         .domain([0, 1])
         .range([0.25, 1]);
 }
+
+var bubble_cloud = new Bubblecloud();
 
 /// Viz Factory
 
@@ -369,6 +356,11 @@ function ExtensionHandlerFactory(){
 
 function AppScope() {
 
+    var $globals = {
+        'glob_paused' : 0,
+        'extParams' : {}
+    };
+
     var addVisualizationTab = function (visualizations) {
         var tabAnchor = "";
         var tabContent = "";
@@ -386,17 +378,8 @@ function AppScope() {
         $('#content').find('div').first().addClass("active");
     };
 
-    this.getCurrentVisualizationName = function () {
-        /*if(extParams.param.length > 1)
-         return $( ".selector" ).tabs( "option", "active" ).attr( 'id' );
-         else
-         return extParams.param;*/
-
-        return "bubblecloud";
-    };
-
     this.getCurrentVisualizationObject = function() {
-        var visualizationName = this.getCurrentVisualizationName();
+        var visualizationName = $(".tab-pane.active").attr('id');;
         var visualizationFactory = new VisualizationFactory();
         return visualizationFactory.createVisualizationObject(visualizationName);
     };
@@ -443,7 +426,6 @@ function AppHandler(){
 
     var $appScope = new AppScope();
     var extensionHandlerFactory = new ExtensionHandlerFactory();
-    var visualizationObject  = $appScope.getCurrentVisualizationObject();
 
     this.setGlobPaused = function(value){
         $appScope.setGlobPaused(value);
@@ -469,7 +451,6 @@ function AppHandler(){
     };
 
     this.initExtensionParams = function (data) {
-
             $appScope.removeVisualizations();
             $appScope.setExtensionParams(data.params);
             this.loadExtensionParams(data.params.name);
@@ -477,6 +458,7 @@ function AppHandler(){
     };
 
     this.updateVisualization = function (watchList, params){
+        var visualizationObject  = $appScope.getCurrentVisualizationObject();
         visualizationObject.initVisualization();
         visualizationObject.updateVisualization(watchList, params);
     };
