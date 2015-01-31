@@ -5,7 +5,6 @@ function AppHandler(){
 
     var $appScope = new AppScope();
     var extensionHandlerFactory = new ExtensionHandlerFactory();
-    var visualizationObject  = $appScope.getCurrentVisualizationObject();
 
     this.setGlobPaused = function(value){
         $appScope.setGlobPaused(value);
@@ -31,7 +30,6 @@ function AppHandler(){
     };
 
     this.initExtensionParams = function (data) {
-
             $appScope.removeVisualizations();
             $appScope.setExtensionParams(data.params);
             this.loadExtensionParams(data.params.name);
@@ -39,6 +37,7 @@ function AppHandler(){
     };
 
     this.updateVisualization = function (watchList, params){
+        var visualizationObject  = $appScope.getCurrentVisualizationObject();
         visualizationObject.initVisualization();
         visualizationObject.updateVisualization(watchList, params);
     };
