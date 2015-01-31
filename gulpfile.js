@@ -10,6 +10,7 @@ var javascriptsDir = "public/javascripts/";
 var extensionsDir = javascriptsDir + "extensions/";
 var extensionsHandlerDir = extensionsDir + "handlers/";
 var distDir = javascriptsDir + 'dist/';
+var appDir = javascriptsDir + 'app/';
 
 var visualizationsDir = "public/javascripts/visualizations/";
 var visualizations = [
@@ -25,12 +26,12 @@ var extensionsHandler = [
                ];
 
 var scripts = [
-    javascriptsDir + 'dist/visualizations.js',
-    javascriptsDir + 'dist/extensionshandler.js',
-    javascriptsDir + 'app/appScope.js',
-    javascriptsDir + 'app/appHandler.js',
-    javascriptsDir + 'app/domEvents.js',
-    javascriptsDir + 'app/socketEvents.js'
+    distDir + 'visualizations.js',
+    distDir + 'extensionshandler.js',
+    appDir + 'appScope.js',
+    appDir + 'appHandler.js',
+    appDir + 'domEvents.js',
+    appDir + 'socketEvents.js'
 ];
 
 gulp.task('extensionsHandler', function () {
