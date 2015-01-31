@@ -5,14 +5,12 @@
 
 function Bubblecloud() {
 
+    if ( arguments.callee._singletonInstance )
+        return arguments.callee._singletonInstance;
+
+    arguments.callee._singletonInstance = this;
+
     Visualizations.call(this);
-
-    /*
-        if ( arguments.callee._singletonInstance )
-            return arguments.callee._singletonInstance;
-
-        arguments.callee._singletonInstance = this;
-    */
 
     var force;
     var nodes;
@@ -75,7 +73,7 @@ function Bubblecloud() {
 
     this.initVisualization = function (){
 
-        if(d3.select("svg").node() === null) {
+        if(d3.select("#bubblecloud svg").node() === null) {
             this.svg = d3.select("#bubblecloud").append("svg")
                 .attr("width", this.width)
                 .attr("height", this.height);
@@ -94,13 +92,11 @@ function Bubblecloud() {
                 .friction(0.94)
                 .on("tick", this.tick);
 
-            $globals.vizData = nodes = force.nodes();
+            nodes = force.nodes();
         }
     };
 
     this.updateVisualization = function(data, params) {
-
-        nodes = $globals.vizData;
 
         var slug_text = "";
 
@@ -144,8 +140,6 @@ function Bubblecloud() {
                 }
             }
         }
-
-        $globals.vizData = nodes;
 
         this.restart();
     };
@@ -233,8 +227,6 @@ function Bubblecloud() {
 
    this.restart =  function () {
 
-       nodes = $globals.vizData;
-
        node = this.svg.selectAll(".node")
                       .data(nodes);
 
@@ -279,3 +271,5 @@ function Bubblecloud() {
         .domain([0, 1])
         .range([0.25, 1]);
 }
+
+var bubble_cloud = new Bubblecloud();
