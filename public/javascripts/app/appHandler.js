@@ -96,7 +96,7 @@ function AppHandler(){
         socket2.emit('stopA', {});
         setTimeout(function(){
             socket2.emit('removeAll', {});
-            visualizationObject.remove();
+            $appScope.getCurrentVisualizationObject().remove();
             $('#tweets').empty();
         },1000);
 
