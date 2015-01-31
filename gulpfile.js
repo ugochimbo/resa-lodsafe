@@ -25,7 +25,6 @@ var extensionsHandler = [
                ];
 
 var scripts = [
-    javascriptsDir + 'app/globals.js',
     javascriptsDir + 'dist/visualizations.js',
     javascriptsDir + 'dist/extensionshandler.js',
     javascriptsDir + 'app/appScope.js',
