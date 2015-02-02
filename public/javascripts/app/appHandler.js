@@ -1,66 +1,64 @@
 
 /************************** App Handler **************************/
 
-function AppHandler(){
+function AppHandler() {
 
     var $appScope = new AppScope();
     var extensionHandlerFactory = new ExtensionHandlerFactory();
 
-    this.setGlobPaused = function(value){
+    this.setGlobPaused = function (value) {
         $appScope.setGlobPaused(value);
     };
 
-    this.isInitData = function(data) {
+    this.isInitData = function (data) {
         return (JSON.stringify($appScope.getExtensionParams()) === '{}' || $appScope.getExtensionParams().name !== data.params.name);
     };
 
-    this.loadExtensionParams =  function (extName) {
+    this.loadExtensionParams = function (extName) {
         $appScope.loadExtensionParams(extName);
         var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
         extensionHandler.init();
     };
 
-    this.handleExtensionChange = function() {
-        var selected =  $("#extensions-list").find("option:selected").attr('value');
+    this.handleExtensionChange = function () {
+        var selected = $("#extensions-list").find("option:selected").attr('value');
         var socket2 = io.connect(window.location.hostname);
         var data = {
-            extParams : {name : selected}
+            extParams: {name: selected}
         };
         socket2.emit('extChange', data);
     };
 
     this.initExtensionParams = function (data) {
-            $appScope.removeVisualizations();
-            $appScope.setExtensionParams(data.params);
-            this.loadExtensionParams(data.params.name);
-            $appScope.loadExtensionVisualizations(data.params.name);
+        $appScope.removeVisualizations();
+        $appScope.setExtensionParams(data.params);
+        this.loadExtensionParams(data.params.name);
+        $appScope.loadExtensionVisualizations(data.params.name);
     };
 
-    this.updateVisualization = function (watchList, params){
-        var visualizationObject  = $appScope.getCurrentVisualizationObject();
+    this.updateVisualization = function (watchList, params) {
+        var visualizationObject = $appScope.getCurrentVisualizationObject();
         visualizationObject.initVisualization();
         visualizationObject.updateVisualization(watchList, params);
     };
 
-    this.updateTwitterStream = function (data)
-    {
-        $('#hashtag').html(' (#'+data.search_for.join()+')').addClass("animated bounceIn");
+    this.updateTwitterStream = function (data) {
+        $('#hashtag').html(' (#' + data.search_for.join() + ')').addClass("animated bounceIn");
         $('.tweet').removeClass('animated').removeClass('flash');
-        $('.r_entity').css('background-color','');
-        $.each(data.recent_tweets,function(i,v){
+        $('.r_entity').css('background-color', '');
+        $.each(data.recent_tweets, function (i, v) {
             $('#tweets').prepend('<div class="tweet animated slideInDown recent">' +
             '<div class="tweet-date">' + v.date + '</div>' +
-            '<div class="tweet-location">' + (v.hasOwnProperty('location') ? v.location : '') + '</div>'+
-            v.text+'</div>')
+            '<div class="tweet-location">' + (v.hasOwnProperty('location') ? v.location : '') + '</div>' +
+            v.text + '</div>')
                 .linkify({target: '_blank'});
         });
     };
 
-    this.updateTopPanelInfo = function (data, params)
-    {
-        if(params.symbols_no > params.max_ent){
+    this.updateTopPanelInfo = function (data, params) {
+        if (params.symbols_no > params.max_ent) {
             this.pauseAnalyzing();
-            alert('The demo is limited to '+max_ent+' entities! contact us for more info: khalili@informatik.uni-leipzig.de');
+            alert('The demo is limited to ' + max_ent + ' entities! contact us for more info: khalili@informatik.uni-leipzig.de');
         }
 
         /*var avg_no = params.total / params.symbols_no;
@@ -68,11 +66,34 @@ function AppHandler(){
         $('#symbols_no').html(params.symbols_no).addClass("animated bounceIn");
         $('#tweets_no').html(data.tweets_no).addClass("animated bounceIn");
 
-        if(data.tweets_no>0 && !$appScope.getGlobPaused()){
+        if (data.tweets_no > 0 && !$appScope.getGlobPaused()) {
             this.establishPauseMode();
-        }else{
+        } else {
             this.setGlobPaused(0);
         }
+    };
+
+    this.onSocketData = function (data){
+
+        var params = {
+            total: data.total,
+            symbols_no: Object.keys(data.watchList.symbols).length,
+            max_ent:  400
+        };
+
+        this.updateTopPanelInfo(data.watchList, params);
+
+        //Right Panel (Tweet Stream)
+        this.updateTwitterStream(data.watchList);
+
+        if(this.isInitData(data)) {
+            this.initExtensionParams(data);
+        }
+
+        //Main Panel (Viz)
+        this.updateVisualization(data.watchList, params);
+
+        $('#last-update').text(new Date().toTimeString());
     };
 
     this.startAnalyzing = function (){
