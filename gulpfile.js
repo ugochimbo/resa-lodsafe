@@ -16,6 +16,7 @@ var visualizationsDir = "public/javascripts/visualizations/";
 var visualizations = [
                         visualizationsDir + 'visualizations.js',
                         visualizationsDir + 'bubblecloud.js',
+                        visualizationsDir + 'lodsafe-facet.js',
                         visualizationsDir + 'factory/visualizationfactory.js'
                 ];
 

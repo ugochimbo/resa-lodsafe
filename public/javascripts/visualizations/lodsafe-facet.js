@@ -17,8 +17,7 @@ function LodsafeFacet() {
 
     this.initVisualization = function(){
         var facetDiv = $('#lodsafe-facet');
-        console.log("Na wa ooooo: " + facetDiv.is("#lodsafe-facets-content"));
-        if (facetDiv.length < 2) {
+        if (!$("#lodsafe-facets-content").length) {
             facetDiv.append("<div id='lodsafe-facets-content'></div><div id='lodsafe-results'></div>");
         }
     };

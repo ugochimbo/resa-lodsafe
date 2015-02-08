@@ -93,7 +93,7 @@ sockets.sockets.on('connection', function(socket) {
         ext = extensionFactory.initObject(data.extParams.name);
         socket.emit('data', ext.output());
     });
-    socket.on('error', function(error) {
+    socket.on('warning', function(error) {
         console.log("Error coming from socket!", error.message);
     });
 });

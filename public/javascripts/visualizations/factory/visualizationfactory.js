@@ -4,10 +4,10 @@
 function VisualizationFactory(){
 
     this.createVisualizationObject = function(visualizationName) {
-        if (visualizationName === 'bubblecloud')
-            return new Bubblecloud();
+        if (visualizationName === 'lodsafe-facet')
+            return lodsafe_facet;
 
-        return new Bubblecloud();
+        return bubble_cloud;
     }
 
 }
