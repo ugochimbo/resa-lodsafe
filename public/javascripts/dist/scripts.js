@@ -550,6 +550,8 @@ function AppHandler() {
 
     this.onSocketData = function (data){
 
+        console.log("we don come " + JSON.stringify(data));
+
         var params = {
             total: data.total,
             symbols_no: Object.keys(data.watchList.symbols).length,
