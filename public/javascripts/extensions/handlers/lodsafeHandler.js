@@ -3,10 +3,13 @@
 
 /* :::: Lodsafe :::: */
 
+/**
+ *
+ * @constructor
+ */
     function LodsafeHandler() {
         this.init = function() {
             var lodsafe_mode = $("#lodsafe-mode");
-
             lodsafe_mode.bootstrapSwitch({
                 'state': true,
                 'animate': true,
