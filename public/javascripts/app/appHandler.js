@@ -1,53 +1,25 @@
 
 /************************** App Handler **************************/
-/**
- *
- * @constructor
- */
+
 function AppHandler() {
 
-    /**
-     *
-     * @type {AppScope}
-     */
     var $appScope = new AppScope();
-
-    /**
-     *
-     * @type {ExtensionHandlerFactory}
-     */
     var extensionHandlerFactory = new ExtensionHandlerFactory();
 
-    /**
-     *
-     * @param value
-     */
     this.setGlobPaused = function (value) {
         $appScope.setGlobPaused(value);
     };
 
-    /**
-     *
-     * @param data
-     * @returns {boolean}
-     */
     this.isInitData = function (data) {
         return (JSON.stringify($appScope.getExtensionParams()) === '{}' || $appScope.getExtensionParams().name !== data.params.name);
     };
 
-    /**
-     *
-     * @param extName
-     */
     this.loadExtensionParams = function (extName) {
         $appScope.loadExtensionParams(extName);
         var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
         extensionHandler.init();
     };
 
-    /**
-     *
-     */
     this.handleExtensionChange = function () {
         var selected = $("#extensions-list").find("option:selected").attr('value');
         var socket2 = io.connect(window.location.hostname);
@@ -57,10 +29,6 @@ function AppHandler() {
         socket2.emit('extChange', data);
     };
 
-    /**
-     *
-     * @param data
-     */
     this.initExtensionParams = function (data) {
         $appScope.removeVisualizations();
         $appScope.setExtensionParams(data.params);
@@ -68,21 +36,12 @@ function AppHandler() {
         $appScope.loadExtensionVisualizations(data.params.name);
     };
 
-    /**
-     *
-     * @param watchList
-     * @param params
-     */
     this.updateVisualization = function (watchList, params) {
         var visualizationObject = $appScope.getCurrentVisualizationObject();
         visualizationObject.initVisualization();
         visualizationObject.updateVisualization(watchList, params);
     };
 
-    /**
-     *
-     * @param data
-     */
     this.updateTwitterStream = function (data) {
         $('#hashtag').html(' (#' + data.search_for.join() + ')').addClass("animated bounceIn");
         $('.tweet').removeClass('animated').removeClass('flash');
@@ -96,11 +55,6 @@ function AppHandler() {
         });
     };
 
-    /**
-     *
-     * @param data
-     * @param params
-     */
     this.updateTopPanelInfo = function (data, params) {
         if (params.symbols_no > params.max_ent) {
             this.pauseAnalyzing();
@@ -119,16 +73,8 @@ function AppHandler() {
         }
     };
 
-    /**
-     *
-     * @param data
-     */
     this.onSocketData = function (data){
 
-        /**
-         *
-         * @type {{total: (*|Extensions.watchList.total|total|params.total|number), symbols_no: (exports.length|*|Store.length|length|Function|findRules.length), max_ent: number}}
-         */
         var params = {
             total: data.total,
             symbols_no: Object.keys(data.watchList.symbols).length,
@@ -150,10 +96,6 @@ function AppHandler() {
         $('#last-update').text(new Date().toTimeString());
     };
 
-    /**
-     *
-     * @returns {number}
-     */
     this.startAnalyzing = function (){
         $appScope.setGlobPaused(0);
         var terms = $('#keyword').val();
@@ -169,9 +111,6 @@ function AppHandler() {
         socket2.emit('startA', data);
     };
 
-    /**
-     *
-     */
     this.stopAnalyzing = function (){
         $('#reset_btn').addClass('animated bounceIn');
         var socket2 = io.connect(window.location.hostname);
@@ -188,9 +127,6 @@ function AppHandler() {
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
     };
 
-    /**
-     *
-     */
     this.pauseAnalyzing = function (){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('pauseA', {});
@@ -201,17 +137,11 @@ function AppHandler() {
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
     };
 
-    /**
-     *
-     */
     this.removeAllEntities = function (){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('removeAll', {});
     };
 
-    /**
-     *
-     */
     this.establishPauseMode = function (){
         var process_button = $('#process_btn');
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');

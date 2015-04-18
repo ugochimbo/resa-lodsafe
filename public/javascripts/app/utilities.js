@@ -1,8 +1,3 @@
-/**
- *
- * @param Text
- * @returns {string}
- */
 function convertToSlug(Text)
 {
     return Text
