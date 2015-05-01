@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: extensions.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: extensions.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var config = require('./../../config.js');
+var twitter = require('twitter');
+var spotlight = require('dbpedia-spotlight');
+
+/**
+ * Base extension class
+ * @class
+ * @namespace
+ */
+function Extensions() {
+
+    /**
+     * Extension Parameter Object
+     * @property params {object} - Extension Parameters
+     */
+    this.params = {};
+
+    /**
+     * Extension Guarded Object
+     * @property params {object} - Guarded Extension Object
+     */
+    this.guarded = {};
+
+    /**
+     * Extension Annotator
+     * @property {object} annotator -  Annotators used by extensions
+     */
+    this.annotator = {
+       SPOTLIGHT : spotlight
+    };
+
+    /**
+     * Watchlist Object
+     * @property {object} watchList - Watchlist Object
+     * @property {array}  watchList.search_for - Array of texts to search for
+     * @property {int}    params.tweets_no - Number of tweets
+     * @property {int}    params.total - Total number of tweets
+     * @property {array}  params.recent_tweets - Array of recent tweets
+     * @property {object} params.symbols - Search string and related symbols
+     */
+    this.watchList = {
+        search_for: [],
+        tweets_no: 0,
+        total: 0,
+        recent_tweets: [],
+        symbols: {}
+    };
+
+    /**
+     * Generic application flags
+     * @property {object} flags - Generic application flag object
+     * @property {int} flags.stop_streaming - Flag to stop current stream
+     * @property {int} flags.pause_streaming - Flag to pause current stream
+     * @property {int} flags.send_data - Flag to send output data
+     * @property {boolean} flags.valid_resource - holds resource validity
+     * @property {int} flags.DEMO_LIMIT - constant for demo limit
+     */
+    this.flags = {
+        stop_streaming : 0,
+        pause_streaming : 0,
+        send_data : 0,
+        valid_resource : false,
+        DEMO_LIMIT: 400
+    };
+
+    //Instantiate the twitter component
+    //You will need to get your own key. Don't worry, it's free. But I cannot provide you one
+    //since it will instantiate a connection on my behalf and will drop all other streaming connections.
+    //Check out: https://dev.twitter.com/1
+    this.twitter = new twitter({
+        consumer_key: config.get['twitter_consumer_key'],
+        consumer_secret: config.get['twitter_consumer_secret'],
+        access_token_key: config.get['twitter_access_token_key'],
+        access_token_secret: config.get['twitter_access_token_secret']
+    });
+
+}
+
+/**
+ * @namespace Extensions
+ */
+Extensions.prototype = {
+
+    /**
+     * isGuarded - Checks if the given key is in the object's guarded object
+     * @function isGuarded
+     * @param key {string} - Key to check in extension's object guarded object
+     * @abstract
+     * @return {boolean}
+     */
+    isGuarded: function (key) {},
+
+    /**
+     * isParamUpdatable - Checks if parameter is updatable. Used to guarantee isGuarded properties remains guarded
+     * @function isParamUpdatable
+     * @param params {object} - Extension parameter property
+     * @param key {string} - Key to check in parameter property
+     * @returns {boolean}
+     */
+    isParamUpdatable: function (params, key) {
+        return params.hasOwnProperty(key) &amp;&amp; !this.isGuarded(key) &amp;&amp; this.params[key] !== undefined;
+    },
+
+    /**
+     * Initialize extensions object params
+     * Example from LodSafe {@link Lodsafe#initParams}
+     * @function initParams
+     * @abstract
+     */
+    initParams: function() {},
+
+    /**
+     * @namespace
+     * Set object's parameter
+     * @function setParams
+     * @param params {object} - Extensions object parameter
+     */
+    setParams: function (params){
+        for(var key in params)
+        {
+            //noinspection JSUnfilteredForInLoop
+            if(this.isParamUpdatable(params, key)) {
+                //noinspection JSUnfilteredForInLoop
+                this.params[key] =  params[key];
+            }
+        }
+    },
+
+    /**
+     * @namespace
+     * Initialize object
+     * @function init
+     */
+    init: function (){
+        this.initParams();
+        this.setGuarded();
+    },
+
+    /**
+     * @namespace
+     * Starts core application process. Example from Resa {@link Resa#initParams}
+     * @function start
+     * @abstract
+     */
+    start: function(){}
+};
+
+module.exports = Extensions;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Extensions.html">Extensions</a></li></ul><h3>Global</h3><ul><li><a href="global.html#annotator">annotator</a></li><li><a href="global.html#flags">flags</a></li><li><a href="global.html#guarded">guarded</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initParams">initParams</a></li><li><a href="global.html#isGuarded">isGuarded</a></li><li><a href="global.html#isParamUpdatable">isParamUpdatable</a></li><li><a href="global.html#params">params</a></li><li><a href="global.html#setParams">setParams</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#watchList">watchList</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun Apr 19 2015 15:09:54 GMT+0200 (W. Europe Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
