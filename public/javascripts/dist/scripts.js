@@ -170,7 +170,6 @@ function Bubblecloud() {
         d3.select(this).select("circle")
             .style("stroke-width", 3);
         //d3.select(this).select("text").attr("opacity", 0.9);
-        //console.log(d3.select(this).select("text"));
         var n_value=d3.select(this).select("text")[0][0].textContent;
         var uri=d3.select(this).select("text")[0][0].__data__.uri;
         var tmp=uri.split('http://dbpedia.org/resource/');
@@ -228,7 +227,6 @@ function Bubblecloud() {
 
         // Push nodes toward their designated focus.
         nodes.forEach(function(o, i) {
-            console.log(o.category);
             o.y += (_this.foci_category(o.category).y - o.y) * k;
             o.x += (_this.foci_category(o.category).x - o.x) * k;
         });
@@ -346,6 +344,53 @@ function LodsafeFacet() {
 }
 
 var lodsafe_facet = new LodsafeFacet();
+/**
+ * Created by Ugochimbo on 5/1/2015.
+ */
+
+function Map() {
+
+    Visualizations.call(this);
+
+    this.map = null;
+    this.data = [];
+
+    this.initMap = function() {
+
+        var mapOptions = {
+            center: { lat: -34.397, lng: 150.644},
+            zoom: 2
+        };
+
+        this.map = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+    };
+
+    this.initVisualization = function(){
+        var mapDiv = $('#map');
+        if (!$("#map-canvas").length) {
+            mapDiv.append("<div id='map-canvas' style='width: 1020px; height: 900px; margin-top: 10px'></div>");
+            google.maps.event.addDomListener(window, 'load', this.initMap());
+        }
+    };
+
+    this.updateVisualization = function(newData, params){
+
+        for (var key in newData.countries) {
+
+            var latLng = new google.maps.LatLng(newData.countries[key].coordinates[0][0], newData.countries[key].coordinates[0][1]);
+
+            var marker = new google.maps.Marker({
+                position: latLng,
+                map: this.map,
+                title: newData.countries[key].tweet
+            });
+        }
+    };
+
+}
+
+var map = new Map();
 
 /// Viz Factory
 
@@ -354,6 +399,9 @@ function VisualizationFactory(){
     this.createVisualizationObject = function(visualizationName) {
         if (visualizationName === 'lodsafe-facet')
             return lodsafe_facet;
+
+        else if (visualizationName === 'map')
+            return map;
 
         return bubble_cloud;
     }
@@ -549,8 +597,6 @@ function AppHandler() {
     };
 
     this.onSocketData = function (data){
-
-        console.log("we don come " + JSON.stringify(data));
 
         var params = {
             total: data.total,

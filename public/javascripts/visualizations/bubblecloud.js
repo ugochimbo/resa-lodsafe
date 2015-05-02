@@ -154,7 +154,6 @@ function Bubblecloud() {
         d3.select(this).select("circle")
             .style("stroke-width", 3);
         //d3.select(this).select("text").attr("opacity", 0.9);
-        //console.log(d3.select(this).select("text"));
         var n_value=d3.select(this).select("text")[0][0].textContent;
         var uri=d3.select(this).select("text")[0][0].__data__.uri;
         var tmp=uri.split('http://dbpedia.org/resource/');
@@ -212,7 +211,6 @@ function Bubblecloud() {
 
         // Push nodes toward their designated focus.
         nodes.forEach(function(o, i) {
-            console.log(o.category);
             o.y += (_this.foci_category(o.category).y - o.y) * k;
             o.x += (_this.foci_category(o.category).x - o.x) * k;
         });
