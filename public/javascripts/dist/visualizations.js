@@ -353,7 +353,10 @@ function Map() {
     Visualizations.call(this);
 
     this.map = null;
+    this.geocoder = new google.maps.Geocoder();
     this.data = [];
+
+    var _this = this;
 
     this.initMap = function() {
 
@@ -375,20 +378,35 @@ function Map() {
     };
 
     this.updateVisualization = function(newData, params){
-
-        for (var coordinate in newData.coordinates) {
-            var latLng = new google.maps.LatLng(newData.coordinates[coordinate[0]], newData.position[coordinate[1]]);
-
-            var marker = new google.maps.Marker({
-                position: latLng,
-                title: "Sample Title"
-            });
-
-            console.log(marker);
-
-            marker.setMap(this.map);
-        }
+        console.log(console.log(newData.placefullname));
+       // for (var place in newData.placefullname) {
+           // console.log(place);
+            //plotToMap(getGeoCoordinate(place));
+       // }
     };
+
+    var getGeoCoordinate = function(address){
+        var interval = setInterval(function() {
+        _this.geocoder.geocode( { 'address': address}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                return results;
+            } else {
+                console.log('Geocode was not successful for the following reason: ' + status);
+                return false;
+            }
+          });
+        }, 1000);
+    };
+
+    var plotToMap = function(geoData){
+        if(geoData) {
+            _this.map.setCenter(geoData[0].geometry.location);
+            var marker = new google.maps.Marker({
+                map: _this.map,
+                position: geoData[0].geometry.location
+            });
+        }
+    }
 
 }
 
