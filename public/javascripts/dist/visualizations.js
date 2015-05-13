@@ -322,19 +322,17 @@ function LodsafeFacet() {
     };
 
     this.item_template =
-        '<div class="item">' +
-        '<p class="tags">' +
-        '<% if (obj.city) {  %><%= obj.category %><% } %>' +
+        '<div class="item left">' +
         '<% if (obj.country) {  %>, <%= obj.continent %><% } %>' +
-        '</p>' +
+        '<% if (obj.city) {  %><%= obj.category %><% } %>' +
         '<p class="desc"><%= obj.tweet %></p>' +
         '</div>';
 
     this.settings = {
         items           : data,
         facets          : {
-            'city'     : 'City',
-            'country'    : 'Country'
+            'country'    : 'Country',
+            'city'     : 'City'
         },
         resultSelector  : '#lodsafe-results',
         facetSelector   : '#lodsafe-facets-content',

@@ -32,10 +32,10 @@ function LodsafeFacet() {
     };
 
     this.item_template =
-        '<div class="item">' +
+        '<div class="item left">' +
         '<p class="tags">' +
-        '<% if (obj.city) {  %><%= obj.category %><% } %>' +
         '<% if (obj.country) {  %>, <%= obj.continent %><% } %>' +
+        '<% if (obj.city) {  %><%= obj.category %><% } %>' +
         '</p>' +
         '<p class="desc"><%= obj.tweet %></p>' +
         '</div>';
@@ -43,8 +43,8 @@ function LodsafeFacet() {
     this.settings = {
         items           : data,
         facets          : {
-            'city'     : 'City',
-            'country'    : 'Country'
+            'country'    : 'Country',
+            'city'     : 'City'
         },
         resultSelector  : '#lodsafe-results',
         facetSelector   : '#lodsafe-facets-content',

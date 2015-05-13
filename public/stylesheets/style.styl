@@ -68,3 +68,115 @@ rect
 	background-color:#b7d1e7
 .r_organization
 	background-color:#da808d
+
+    /* Test Faceted Search. Extract to separate style sheet when done! */
+.facetsearch
+    display: inline-block
+    width: 200px
+    vertical-align: top
+
+.activeorderby, .activefacet
+    color: red
+
+.bottomline
+    padding: 10px 0 10px 0
+    font-weight: bold
+
+.bottomline .orderby,
+.bottomline .facettotalcount
+    display: inline-block
+
+.bottomline .orderby ul,
+.bottomline .orderby li
+    display: inline
+    padding: 0
+
+.bottomline .orderby-title
+    margin: 0 0 0 10px
+
+.bottomline .deselectstartover
+    float: right
+
+#language
+    width: 400px
+
+#language .facetlist
+    column-count: 2
+    -webkit-column-count: 2
+    -moz-column-count: 2
+    -o-column-count: 2
+
+.left
+    width: 500px !important
+    padding-bottom: 40px
+    min-height: auto !important
+    padding-right: 0
+    float: left
+
+.item
+    background: #fff
+    border: 1px solid #ccc
+    padding: 10px
+    font-size: 1.2em
+    position: relative
+    width: 200px
+
+.item:before
+    position: absolute
+    top: -14px
+    left: 98px
+    display: inline-block
+    border-right: 14px solid transparent
+    border-bottom: 14px solid #fff
+    border-left: 14px solid transparent
+    border-bottom-color: rgba(0, 0, 0, 0.2)
+    content: ''
+
+.item:after
+    position: absolute
+    top: -12px
+    left: 99px
+    display: inline-block
+    border-right: 12px solid transparent
+    border-bottom: 12px solid #fff
+    border-left: 12px solid transparent
+    content: ''
+
+.item.left:before
+    border-top: 14px solid transparent
+    border-right: 14px solid #fff
+    border-bottom: 14px solid transparent
+    border-right-color: rgba(0, 0, 0, 0.2)
+    left: -28px
+    top: 20px
+
+.item.left:after
+    border-top: 12px solid transparent
+    border-right: 12px solid #fff
+    border-bottom: 12px solid transparent
+    left: -24px
+    top: 22px
+
+.item h4
+    font-size: 1.2em
+
+#showmorebutton
+    border: 1px solid #AAA
+    border-radius: 15px
+    background-color: #DDD
+    margin: 0 0 10px 0
+    padding: 10px
+    width: 100%
+    display: block
+    text-align: center
+    cursor: pointer
+
+
+/*********Lodsafe********/
+.tweet-location
+    color #7c6e7b
+    opacity 0.6
+    position absolute
+    bottom 0
+    left 0
+    overflow hidden
