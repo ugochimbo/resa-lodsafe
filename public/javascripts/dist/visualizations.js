@@ -360,8 +360,8 @@ function Map() {
     this.initMap = function() {
 
         var mapOptions = {
-            center: { lat: -34.397, lng: 150.644},
-            zoom: 4
+            center: { lat: 50.7323, lng: 7.1847},
+            zoom: 2
         };
 
         this.map = new google.maps.Map(document.getElementById('map-canvas'),
@@ -377,18 +377,19 @@ function Map() {
     };
 
     this.updateVisualization = function(newData, params){
-        for (var coordinate in newData.geocoordinates) {
-            plotToMap(newData.geocoordinates[coordinate]);
+        for (var data in newData.mapdata) {
+            plotToMap(newData.mapdata[data]);
         }
     };
 
-    var plotToMap = function(geoData){
-        var latLng = new google.maps.LatLng(geoData[0], geoData[1]);
+    var plotToMap = function(data){
+        var latLng = new google.maps.LatLng(data.coordinate[0], data.coordinate[1]);
 
        // _this.map.setCenter(latLng);
         var marker = new google.maps.Marker({
             map: _this.map,
-            position: latLng
+            position: latLng,
+            title: data.text
         });
 
        // marker.setMap(_this.map);
