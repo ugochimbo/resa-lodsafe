@@ -322,13 +322,13 @@ function LodsafeFacet() {
     };
 
     this.item_template =
-        '<div class="item left">' +
-        '<p class="tags">' +
-        '<% if (obj.country) {  %> <%= obj.continent %><% } %>' +
-        '<% if (obj.city) {  %><%= obj.category %><% } %>' +
-        '</p>' +
-        '<p class="desc"><%= obj.tweet %></p>' +
-        '</div>';
+                '<div class="item left">' +
+                    '<p class="tags">' +
+                        '<% if (obj.country) {  %> <%= obj.continent %><% } %>' +
+                        '<% if (obj.city) {  %><%= obj.category %><% } %>' +
+                    '</p>' +
+                    '<p class="desc"><%= obj.tweet %></p>' +
+                '</div>';
 
     this.settings = {
         items           : data,
