@@ -48,6 +48,7 @@ function LodsafeFacet() {
         },
         resultSelector  : '#lodsafe-results',
         facetSelector   : '#lodsafe-facets-content',
+        orderByOptions  : {'country': 'Country', 'city': 'City'},
         resultTemplate  : this.item_template
     };
 
