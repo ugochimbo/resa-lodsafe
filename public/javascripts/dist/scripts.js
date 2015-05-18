@@ -7,6 +7,21 @@ function Visualizations() {
     this.width = 900;
     this.height = 900;
 
+    this.getResourceDescription = function(resource){
+        var desc='';
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: "http://lookup.dbpedia.org/api/search/PrefixSearch?MaxHits=1&QueryString="+resource,
+            async:false
+        }).done(function( data ) {
+            //console.log(data)
+            desc=data.results[0].description
+        });
+
+        return desc;
+    }
+
 }
 
 Visualizations.prototype = {
@@ -173,16 +188,7 @@ function Bubblecloud() {
         var n_value=d3.select(this).select("text")[0][0].textContent;
         var uri=d3.select(this).select("text")[0][0].__data__.uri;
         var tmp=uri.split('http://dbpedia.org/resource/');
-        var desc='';
-        $.ajax({
-            type: "GET",
-            dataType: "json",
-            url: "http://lookup.dbpedia.org/api/search/PrefixSearch?MaxHits=1&QueryString="+tmp[1],
-            async:false
-        }).done(function( data ) {
-            //console.log(data)
-            desc=data.results[0].description
-        });
+        var desc = _this.getResourceDescription(tmp[1]);
         if(!desc){
             desc='';
         }
