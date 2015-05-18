@@ -5,7 +5,7 @@
 
     function LodsafeHandler() {
         this.init = function() {
-            var lodsafe_mode = $("#lodsafe-mode");
+            /*var lodsafe_mode = $("#lodsafe-mode");
 
             lodsafe_mode.bootstrapSwitch({
                 'state': true,
@@ -18,6 +18,6 @@
             lodsafe_mode.on('switchChange.bootstrapSwitch', function(event, state) {
                 if(extParams['strict'] !== undefined)
                     extParams.strict = state;
-            });
+            });*/
         }
     }
