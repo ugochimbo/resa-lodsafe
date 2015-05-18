@@ -376,15 +376,23 @@ function Map() {
     var plotToMap = function(data){
         var latLng = new google.maps.LatLng(data.coordinate[0], data.coordinate[1]);
 
-       // _this.map.setCenter(latLng);
         var marker = new google.maps.Marker({
             map: _this.map,
             position: latLng,
             title: data.text
         });
 
-       // marker.setMap(_this.map);
+        addInfoWindow(marker, data.text);
     };
+
+    var addInfoWindow = function(marker, info){
+        var infowindow = new google.maps.InfoWindow({
+            content: info
+        });
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(_this.map,marker);
+        });
+    }
 
 }
 
