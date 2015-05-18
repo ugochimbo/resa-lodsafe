@@ -55,6 +55,7 @@ function AppScope() {
     this.removeVisualizations = function (){
         $('#visualizations').empty();
         $('#content').empty();
+        removeDescriptionHandler();
     };
 
     this.loadExtensionVisualizations = function(extName) {

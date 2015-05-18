@@ -3,24 +3,10 @@
 
 function Visualizations() {
 
+    var _this = this;
     this.svg = null;
     this.width = 900;
     this.height = 900;
-
-    this.getResourceDescription = function(resource){
-        var desc='';
-        $.ajax({
-            type: "GET",
-            dataType: "json",
-            url: "http://lookup.dbpedia.org/api/search/PrefixSearch?MaxHits=1&QueryString="+resource,
-            async:false
-        }).done(function( data ) {
-            //console.log(data)
-            desc=data.results[0].description
-        });
-
-        return desc;
-    }
 
 }
 
@@ -187,11 +173,8 @@ function Bubblecloud() {
         //d3.select(this).select("text").attr("opacity", 0.9);
         var n_value=d3.select(this).select("text")[0][0].textContent;
         var uri=d3.select(this).select("text")[0][0].__data__.uri;
-        var tmp=uri.split('http://dbpedia.org/resource/');
-        var desc = _this.getResourceDescription(tmp[1]);
-        if(!desc){
-            desc='';
-        }
+        var desc = getResourceDescription(uri);
+
         $(d3.select(this).select("circle")).popover({
             'title': '<b>'+n_value+'</b>',
             'html':true,
@@ -316,6 +299,7 @@ function LodsafeFacet() {
         if (!$("#lodsafe-facets-content").length) {
             facetDiv.append("<div id='lodsafe-facets-content'></div><div id='lodsafe-results'></div>");
         }
+        attachDescriptionHandler();
     };
 
     this.updateVisualization = function(newData, params){

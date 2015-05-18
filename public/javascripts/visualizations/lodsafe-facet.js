@@ -20,6 +20,7 @@ function LodsafeFacet() {
         if (!$("#lodsafe-facets-content").length) {
             facetDiv.append("<div id='lodsafe-facets-content'></div><div id='lodsafe-results'></div>");
         }
+        attachDescriptionHandler();
     };
 
     this.updateVisualization = function(newData, params){

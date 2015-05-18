@@ -3,24 +3,10 @@
 
 function Visualizations() {
 
+    var _this = this;
     this.svg = null;
     this.width = 900;
     this.height = 900;
-
-    this.getResourceDescription = function(resource){
-        var desc='';
-        $.ajax({
-            type: "GET",
-            dataType: "json",
-            url: "http://lookup.dbpedia.org/api/search/PrefixSearch?MaxHits=1&QueryString="+resource,
-            async:false
-        }).done(function( data ) {
-            //console.log(data)
-            desc=data.results[0].description
-        });
-
-        return desc;
-    }
 
 }
 
@@ -187,11 +173,8 @@ function Bubblecloud() {
         //d3.select(this).select("text").attr("opacity", 0.9);
         var n_value=d3.select(this).select("text")[0][0].textContent;
         var uri=d3.select(this).select("text")[0][0].__data__.uri;
-        var tmp=uri.split('http://dbpedia.org/resource/');
-        var desc = _this.getResourceDescription(tmp[1]);
-        if(!desc){
-            desc='';
-        }
+        var desc = getResourceDescription(uri);
+
         $(d3.select(this).select("circle")).popover({
             'title': '<b>'+n_value+'</b>',
             'html':true,
@@ -316,6 +299,7 @@ function LodsafeFacet() {
         if (!$("#lodsafe-facets-content").length) {
             facetDiv.append("<div id='lodsafe-facets-content'></div><div id='lodsafe-results'></div>");
         }
+        attachDescriptionHandler();
     };
 
     this.updateVisualization = function(newData, params){
@@ -437,7 +421,7 @@ function VisualizationFactory(){
 
     function LodsafeHandler() {
         this.init = function() {
-            var lodsafe_mode = $("#lodsafe-mode");
+            /*var lodsafe_mode = $("#lodsafe-mode");
 
             lodsafe_mode.bootstrapSwitch({
                 'state': true,
@@ -450,7 +434,7 @@ function VisualizationFactory(){
             lodsafe_mode.on('switchChange.bootstrapSwitch', function(event, state) {
                 if(extParams['strict'] !== undefined)
                     extParams.strict = state;
-            });
+            });*/
         }
     }
 
@@ -524,6 +508,7 @@ function AppScope() {
     this.removeVisualizations = function (){
         $('#visualizations').empty();
         $('#content').empty();
+        removeDescriptionHandler();
     };
 
     this.loadExtensionVisualizations = function(extName) {
@@ -710,6 +695,44 @@ function stopAnalyzing() {
 $("#extensions-list").on( "change", function() {
     appHandler.handleExtensionChange();
 });
+
+function getResourceDescription(resourceUri){
+    var uriComponents = resourceUri.split('http://dbpedia.org/resource/');
+    var description='';
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "http://lookup.dbpedia.org/api/search/PrefixSearch?MaxHits=1&QueryString="+uriComponents[1],
+        async:false
+    }).done(function( data ) {
+        //console.log(data);
+        description=data.results[0].description
+    });
+
+    if(!description){
+        return '';
+    }
+
+    return description;
+}
+
+function popOver() {
+    var resource = $(this).attr('resource');
+    $(this).webuiPopover({
+        title: resource.split('http://dbpedia.org/resource/')[1],
+        content: getResourceDescription(resource),
+        placement: 'top',
+        animation: 'pop'
+    });
+}
+
+function attachDescriptionHandler() {
+    $('body').on('mouseover', 'span.r_entity', popOver);
+}
+
+function removeDescriptionHandler() {
+    $('body').off('mouseover', 'span.r_entity', popOver);
+}
 
 
 

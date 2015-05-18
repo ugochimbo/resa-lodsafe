@@ -156,11 +156,8 @@ function Bubblecloud() {
         //d3.select(this).select("text").attr("opacity", 0.9);
         var n_value=d3.select(this).select("text")[0][0].textContent;
         var uri=d3.select(this).select("text")[0][0].__data__.uri;
-        var tmp=uri.split('http://dbpedia.org/resource/');
-        var desc = _this.getResourceDescription(tmp[1]);
-        if(!desc){
-            desc='';
-        }
+        var desc = getResourceDescription(uri);
+
         $(d3.select(this).select("circle")).popover({
             'title': '<b>'+n_value+'</b>',
             'html':true,
