@@ -95,6 +95,8 @@ function Bubblecloud() {
                 .on("tick", this.tick);
 
             nodes = force.nodes();
+
+            attachDescriptionHandler();
         }
     };
 

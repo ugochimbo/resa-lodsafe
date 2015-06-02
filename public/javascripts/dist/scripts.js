@@ -1,5 +1,5 @@
 
-/************************** Visualizations  Factory **************************/
+/************************** Base Visualizations  Class **************************/
 
 function Visualizations() {
 
@@ -112,6 +112,8 @@ function Bubblecloud() {
                 .on("tick", this.tick);
 
             nodes = force.nodes();
+
+            attachDescriptionHandler();
         }
     };
 
@@ -294,6 +296,9 @@ function LodsafeFacet() {
     var data = [];
     var _this = this;
 
+    /**
+     * Initialize Visualization
+     */
     this.initVisualization = function(){
         var facetDiv = $('#lodsafe-facet');
         if (!$("#lodsafe-facets-content").length) {
@@ -302,6 +307,11 @@ function LodsafeFacet() {
         attachDescriptionHandler();
     };
 
+    /**
+     * Update Visualization
+     * @param newData
+     * @param params
+     */
     this.updateVisualization = function(newData, params){
 
         for (var key in newData.countries) {
@@ -348,6 +358,9 @@ function Map() {
 
     var _this = this;
 
+    /**
+     * Initialize Google Map
+     */
     this.initMap = function() {
 
         var mapOptions = {
@@ -359,6 +372,9 @@ function Map() {
             mapOptions);
     };
 
+    /**
+     * Initialize Visualization
+     */
     this.initVisualization = function(){
         var mapDiv = $('#map');
         if (!$("#map-canvas").length) {
@@ -368,24 +384,37 @@ function Map() {
         attachDescriptionHandler();
     };
 
+    /**
+     * Update Visualization
+     * @param newData
+     * @param params
+     */
     this.updateVisualization = function(newData, params){
         for (var data in newData.mapdata) {
             plotToMap(newData.mapdata[data]);
         }
     };
 
+    /**
+     * Plot Data to Map
+     * @param data
+     */
     var plotToMap = function(data){
         var latLng = new google.maps.LatLng(data.coordinate[0], data.coordinate[1]);
 
         var marker = new google.maps.Marker({
             map: _this.map,
-            position: latLng,
-            title: data.text
+            position: latLng
         });
 
         addInfoWindow(marker, data.text);
     };
 
+    /**
+     * Google Maps Info Window
+     * @param marker
+     * @param info
+     */
     var addInfoWindow = function(marker, info){
         var infowindow = new google.maps.InfoWindow({
             content: info
@@ -398,9 +427,10 @@ function Map() {
 }
 
 var map = new Map();
-
-/// Viz Factory
-
+/**
+ * Visualization Factory
+ * @constructor
+ */
 function VisualizationFactory(){
 
     this.createVisualizationObject = function(visualizationName) {
@@ -462,14 +492,25 @@ function ExtensionHandlerFactory(){
 
 
 /************************** App Scope Object **************************/
-
+/**
+ * AppScope - The application scope object.
+ * @constructor
+ */
 function AppScope() {
 
+    /**
+     * Global variables
+     * @type {{glob_paused: number, extParams: {}}}
+     */
     var $globals = {
         'glob_paused' : 0,
         'extParams' : {}
     };
 
+    /**
+     * Adds Visualization Tabs
+     * @param visualizations
+     */
     var addVisualizationTab = function (visualizations) {
         var tabAnchor = "";
         var tabContent = "";
@@ -482,44 +523,78 @@ function AppScope() {
         $('#content').append(tabContent);
     };
 
+    /**
+     * Set active visualization tabs
+     */
     var setActiveVisualizationTab = function (){
         $('#visualizations').find('li').first().addClass("active");
         $('#content').find('div').first().addClass("active");
     };
 
+    /**
+     * Get current visualization object
+     * @returns {*}
+     */
     this.getCurrentVisualizationObject = function() {
         var visualizationName = $(".tab-pane.active").attr('id');
         var visualizationFactory = new VisualizationFactory();
         return visualizationFactory.createVisualizationObject(visualizationName);
     };
 
+    /**
+     * Get application global glob_paused variable
+     * @returns {$globals.glob_paused|*}
+     */
     this.getGlobPaused = function () {
         return $globals.glob_paused;
     };
 
+    /**
+     * Set application global glob_paused variable
+     * @param value
+     */
     this.setGlobPaused = function (value) {
         $globals.glob_paused = value;
     };
 
+    /**
+     * Get extension application params
+     * @returns {$globals.extParams|*}
+     */
     this.getExtensionParams = function() {
         return $globals.extParams;
     };
 
+    /**
+     * Set extension application params
+     * @param params
+     */
     this.setExtensionParams = function(params){
         $globals.extParams = params;
     };
 
+    /**
+     * Load extension params from disk
+     * @param extName
+     */
     this.loadExtensionParams = function(extName){
         var file = "./../params/" + extName + ".html";
         $('#extension-params').load(file);
     };
 
+    /**
+     * Remove visualizations
+     */
     this.removeVisualizations = function (){
         $('#visualizations').empty();
         $('#content').empty();
         removeDescriptionHandler();
     };
 
+    /**
+     * Load extension visualization on extension change
+     * @param extName
+     */
     this.loadExtensionVisualizations = function(extName) {
         if($globals.extParams.name !== undefined || extName !== $globals.extParams.name)
         {
@@ -531,7 +606,12 @@ function AppScope() {
 }
 
 /************************** App Handler **************************/
-
+/**
+ * AppHandler is responsible for handling
+ * states of the application components.
+ *
+ * @constructor
+ */
 function AppHandler() {
 
     var $appScope = new AppScope();
@@ -541,16 +621,28 @@ function AppHandler() {
         $appScope.setGlobPaused(value);
     };
 
+    /**
+     * Check initial state
+     * @param data
+     * @returns {boolean}
+     */
     this.isInitData = function (data) {
         return (JSON.stringify($appScope.getExtensionParams()) === '{}' || $appScope.getExtensionParams().name !== data.params.name);
     };
 
+    /**
+     * Load extension parameters
+     * @param extName
+     */
     this.loadExtensionParams = function (extName) {
         $appScope.loadExtensionParams(extName);
         var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
         extensionHandler.init();
     };
 
+    /**
+     * Handler extension change event
+     */
     this.handleExtensionChange = function () {
         var selected = $("#extensions-list").find("option:selected").attr('value');
         var socket2 = io.connect(window.location.hostname);
@@ -560,6 +652,10 @@ function AppHandler() {
         socket2.emit('extChange', data);
     };
 
+    /**
+     * Initialize extension parameters
+     * @param data
+     */
     this.initExtensionParams = function (data) {
         $appScope.removeVisualizations();
         $appScope.setExtensionParams(data.params);
@@ -567,12 +663,21 @@ function AppHandler() {
         $appScope.loadExtensionVisualizations(data.params.name);
     };
 
+    /**
+     * Update current visualization
+     * @param watchList
+     * @param params
+     */
     this.updateVisualization = function (watchList, params) {
         var visualizationObject = $appScope.getCurrentVisualizationObject();
         visualizationObject.initVisualization();
         visualizationObject.updateVisualization(watchList, params);
     };
 
+    /**
+     * Update twitter stream panel
+     * @param data
+     */
     this.updateTwitterStream = function (data) {
         $('#hashtag').html(' (#' + data.search_for.join() + ')').addClass("animated bounceIn");
         $('.tweet').removeClass('animated').removeClass('flash');
@@ -586,6 +691,11 @@ function AppHandler() {
         });
     };
 
+    /**
+     * Update top panel info
+     * @param data
+     * @param params
+     */
     this.updateTopPanelInfo = function (data, params) {
         if (params.symbols_no > params.max_ent) {
             this.pauseAnalyzing();
@@ -604,6 +714,10 @@ function AppHandler() {
         }
     };
 
+    /**
+     * Handle onSocketData event
+     * @param data
+     */
     this.onSocketData = function (data){
 
         var params = {
@@ -627,6 +741,10 @@ function AppHandler() {
         $('#last-update').text(new Date().toTimeString());
     };
 
+    /**
+     * Handle start analyzing event
+     * @returns {number}
+     */
     this.startAnalyzing = function (){
         $appScope.setGlobPaused(0);
         var terms = $('#keyword').val();
@@ -642,6 +760,9 @@ function AppHandler() {
         socket2.emit('startA', data);
     };
 
+    /**
+     * Handle stop analyzing event
+     */
     this.stopAnalyzing = function (){
         $('#reset_btn').addClass('animated bounceIn');
         var socket2 = io.connect(window.location.hostname);
@@ -658,6 +779,9 @@ function AppHandler() {
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
     };
 
+    /**
+     * Handle pause analyzing event
+     */
     this.pauseAnalyzing = function (){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('pauseA', {});
@@ -668,11 +792,18 @@ function AppHandler() {
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
     };
 
+
+    /**
+     * Remove all entities
+     */
     this.removeAllEntities = function (){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('removeAll', {});
     };
 
+    /**
+     * Handle onPause event
+     */
     this.establishPauseMode = function (){
         var process_button = $('#process_btn');
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
@@ -687,6 +818,11 @@ var appHandler = new AppHandler();
 //************ DOM Events *************//
 
 //** TODO: Refactor view.. Unclean code **//
+
+/**
+ * Dom Events Handler Facade
+ */
+
 
 function startAnalyzing(){
     appHandler.startAnalyzing();
@@ -746,7 +882,9 @@ function removeDescriptionHandler() {
 
 
 //************ Sockets *************//
-
+/**
+ * Socket Events Handler
+ */
 var socket = io.connect(window.location.hostname);
 
 socket.on('data', function(data) {

@@ -15,6 +15,9 @@ function LodsafeFacet() {
     var data = [];
     var _this = this;
 
+    /**
+     * Initialize Visualization
+     */
     this.initVisualization = function(){
         var facetDiv = $('#lodsafe-facet');
         if (!$("#lodsafe-facets-content").length) {
@@ -23,6 +26,11 @@ function LodsafeFacet() {
         attachDescriptionHandler();
     };
 
+    /**
+     * Update Visualization
+     * @param newData
+     * @param params
+     */
     this.updateVisualization = function(newData, params){
 
         for (var key in newData.countries) {

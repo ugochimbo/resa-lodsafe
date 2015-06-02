@@ -1,6 +1,7 @@
-
-/// Viz Factory
-
+/**
+ * Visualization Factory
+ * @constructor
+ */
 function VisualizationFactory(){
 
     this.createVisualizationObject = function(visualizationName) {

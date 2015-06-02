@@ -1,5 +1,5 @@
 
-/************************** Visualizations  Factory **************************/
+/************************** Base Visualizations  Class **************************/
 
 function Visualizations() {
 
