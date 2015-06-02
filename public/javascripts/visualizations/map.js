@@ -28,6 +28,7 @@ function Map() {
             mapDiv.append("<div id='map-canvas' style='width: 1020px; height: 900px; margin-top: 10px'></div>");
             google.maps.event.addDomListener(window, 'load', this.initMap());
         }
+        attachDescriptionHandler();
     };
 
     this.updateVisualization = function(newData, params){
