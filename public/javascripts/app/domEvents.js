@@ -3,6 +3,11 @@
 
 //** TODO: Refactor view.. Unclean code **//
 
+/**
+ * Dom Events Handler Facade
+ */
+
+
 function startAnalyzing(){
     appHandler.startAnalyzing();
 }

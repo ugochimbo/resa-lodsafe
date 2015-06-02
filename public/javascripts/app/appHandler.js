@@ -1,6 +1,11 @@
 
 /************************** App Handler **************************/
-
+/**
+ * AppHandler is responsible for handling
+ * states of the application components.
+ *
+ * @constructor
+ */
 function AppHandler() {
 
     var $appScope = new AppScope();
@@ -10,16 +15,28 @@ function AppHandler() {
         $appScope.setGlobPaused(value);
     };
 
+    /**
+     * Check initial state
+     * @param data
+     * @returns {boolean}
+     */
     this.isInitData = function (data) {
         return (JSON.stringify($appScope.getExtensionParams()) === '{}' || $appScope.getExtensionParams().name !== data.params.name);
     };
 
+    /**
+     * Load extension parameters
+     * @param extName
+     */
     this.loadExtensionParams = function (extName) {
         $appScope.loadExtensionParams(extName);
         var extensionHandler = extensionHandlerFactory.createExtensionHandlerObject(extName);
         extensionHandler.init();
     };
 
+    /**
+     * Handler extension change event
+     */
     this.handleExtensionChange = function () {
         var selected = $("#extensions-list").find("option:selected").attr('value');
         var socket2 = io.connect(window.location.hostname);
@@ -29,6 +46,10 @@ function AppHandler() {
         socket2.emit('extChange', data);
     };
 
+    /**
+     * Initialize extension parameters
+     * @param data
+     */
     this.initExtensionParams = function (data) {
         $appScope.removeVisualizations();
         $appScope.setExtensionParams(data.params);
@@ -36,12 +57,21 @@ function AppHandler() {
         $appScope.loadExtensionVisualizations(data.params.name);
     };
 
+    /**
+     * Update current visualization
+     * @param watchList
+     * @param params
+     */
     this.updateVisualization = function (watchList, params) {
         var visualizationObject = $appScope.getCurrentVisualizationObject();
         visualizationObject.initVisualization();
         visualizationObject.updateVisualization(watchList, params);
     };
 
+    /**
+     * Update twitter stream panel
+     * @param data
+     */
     this.updateTwitterStream = function (data) {
         $('#hashtag').html(' (#' + data.search_for.join() + ')').addClass("animated bounceIn");
         $('.tweet').removeClass('animated').removeClass('flash');
@@ -55,6 +85,11 @@ function AppHandler() {
         });
     };
 
+    /**
+     * Update top panel info
+     * @param data
+     * @param params
+     */
     this.updateTopPanelInfo = function (data, params) {
         if (params.symbols_no > params.max_ent) {
             this.pauseAnalyzing();
@@ -73,6 +108,10 @@ function AppHandler() {
         }
     };
 
+    /**
+     * Handle onSocketData event
+     * @param data
+     */
     this.onSocketData = function (data){
 
         var params = {
@@ -96,6 +135,10 @@ function AppHandler() {
         $('#last-update').text(new Date().toTimeString());
     };
 
+    /**
+     * Handle start analyzing event
+     * @returns {number}
+     */
     this.startAnalyzing = function (){
         $appScope.setGlobPaused(0);
         var terms = $('#keyword').val();
@@ -111,6 +154,9 @@ function AppHandler() {
         socket2.emit('startA', data);
     };
 
+    /**
+     * Handle stop analyzing event
+     */
     this.stopAnalyzing = function (){
         $('#reset_btn').addClass('animated bounceIn');
         var socket2 = io.connect(window.location.hostname);
@@ -127,6 +173,9 @@ function AppHandler() {
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
     };
 
+    /**
+     * Handle pause analyzing event
+     */
     this.pauseAnalyzing = function (){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('pauseA', {});
@@ -137,11 +186,18 @@ function AppHandler() {
         process_button.removeClass('btn-warning').addClass('btn-success').attr('title','start').removeClass('bounceIn').addClass('animated bounceIn').attr('onclick','startAnalyzing();');
     };
 
+
+    /**
+     * Remove all entities
+     */
     this.removeAllEntities = function (){
         var socket2 = io.connect(window.location.hostname);
         socket2.emit('removeAll', {});
     };
 
+    /**
+     * Handle onPause event
+     */
     this.establishPauseMode = function (){
         var process_button = $('#process_btn');
         process_button.find('i').removeClass('glyphicon-play').addClass('glyphicon-pause');
