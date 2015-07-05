@@ -8,7 +8,9 @@ xReSA is an upgrade of [ReSA](https://github.com/ali1k/resa) - making it an exte
 - Extension parameters are automatically displayed on select.
 - Extension Visualizations are automatically loaded on select.
 - Visualizations are re-usable.
+- Visualizations are not limited to specific libraries (such as D3).
 - Extensions can define a guarded object to protect its parameters from mass assignment (Visualizations is the default guarded attribute).
+- Include location based filtering extension as proof of concept.
 - Source code documentation.
 
 ### Requirements
