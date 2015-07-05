@@ -41,7 +41,7 @@ Assuming you have [vagrant](http://www.vagrantup.com/) installed, you can run Re
 3. Change to workdir with `cd /vagrant`
 4. (optional) Install ReSA-LodSaFE with `npm install`
 5. Run the app with `node app.js`
-6. Open vagrant host via 5.5.5.5:5555 in browser and see ReSA-LodSaFE running (*see Vagrantfile)
+6. Open vagrant host via 5.5.5.5:5555 in browser and see xReSA running (*see Vagrantfile)
 
 ### Running (Without Vagrant)
 
@@ -52,7 +52,7 @@ Assuming you have [vagrant](http://www.vagrantup.com/) installed, you can run Re
  - http://localhost:5555
  
 ### ReSA Update/Upgrade Notification.
- Though ReSA-LodSaFE extends ReSA, the following updates/upgrades were made on ReSA:
+  The following core upgrades were made on ReSA:
  - Express upgraded from 3.x to 4.x
  - Socket.io (client/server) upgraded from 0.9.11 to ~1.2.0
  - nTwitter module (deprecated) replaced with 'twitter-1.1' module.
