@@ -6,22 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <title>Resa-lodsafe by ugochimbo</title>
+    <title>xReSA by ugochimbo</title>
   </head>
 
   <body>
     <header>
       <div class="inner">
-        <h1>Resa-lodsafe</h1>
-        <h2>Extension of ReSA to provide LOD-based Disambiguation and Spatial-Filter Extension.</h2>
-        <a href="https://github.com/ugochimbo/resa-lodsafe" class="button"><small>View project on</small> GitHub</a>
+        <h1>xReSA</h1>
+        <h2>xReSA is an upgrade of ReSA - making it an extensible platform. It includes a location based filter extension as proof of concept.</h2>
+        <a href="https://github.com/ugochimbo/xReSA" class="button"><small>View project on</small> GitHub</a>
       </div>
     </header>
 
@@ -29,9 +29,23 @@
       <div class="inner clearfix">
         <section id="main-content">
           <h1>
-<a id="resa---lodsafe" class="anchor" href="#resa---lodsafe" aria-hidden="true"><span class="octicon octicon-link"></span></a>ReSA - LoDSaFE</h1>
+<a id="xresa---extensible-resa--resa-20" class="anchor" href="#xresa---extensible-resa--resa-20" aria-hidden="true"><span class="octicon octicon-link"></span></a>xReSA - Extensible ReSA / ReSA 2.0</h1>
 
-<p>ReSA-LoDSaFE extends ReSA to provide LOD-based disambiguation and a Spatial-Filter Extension</p>
+<p>xReSA is an upgrade of <a href="https://github.com/ali1k/resa">ReSA</a> - making it an extensible platform. The adds the following functionality/capabilities to ReSA:</p>
+
+<ul>
+<li>New extensions can be added.</li>
+<li>Extensions are inheritable and thus extensible.</li>
+<li>Extensions contain a parameter and visualization object and a handler to handle parameter updates from the view (a little like angular's '$scope').</li>
+<li>Extensions are selected as a drop down list.</li>
+<li>Extension parameters are automatically displayed on select.</li>
+<li>Extension Visualizations are automatically loaded on select.</li>
+<li>Visualizations are re-usable.</li>
+<li>Visualizations are not limited to specific libraries (such as D3).</li>
+<li>Extensions can define a guarded object to protect its parameters from mass assignment (Visualizations is the default guarded attribute).</li>
+<li>Include location based filtering extension as proof of concept.</li>
+<li>Source code documentation.</li>
+</ul>
 
 <h3>
 <a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h3>
@@ -83,7 +97,7 @@ Bower (get by running "npm install -g bower")</p>
 </li>
 <li>Run the app with <code>node app.js</code>
 </li>
-<li>Open vagrant host via 5.5.5.5:5555 in browser and see ReSA-LodSaFE running (*see Vagrantfile)</li>
+<li>Open vagrant host via 5.5.5.5:5555 in browser and see xReSA running (*see Vagrantfile)</li>
 </ol>
 
 <h3>
@@ -109,28 +123,30 @@ Bower (get by running "npm install -g bower")</p>
 <h3>
 <a id="resa-updateupgrade-notification" class="anchor" href="#resa-updateupgrade-notification" aria-hidden="true"><span class="octicon octicon-link"></span></a>ReSA Update/Upgrade Notification.</h3>
 
-<p>Though ReSA-LodSaFE extends ReSA, the following updates/upgrades were made on ReSA:</p>
+<p>The following core upgrades were made on ReSA:</p>
 
 <ul>
 <li>Express upgraded from 3.x to 4.x</li>
 <li>Socket.io (client/server) upgraded from 0.9.11 to ~1.2.0</li>
-<li>nTwitter module (deprecated) replaced with 'twitter' module.</li>
+<li>nTwitter module (deprecated) replaced with 'twitter-1.1' module.</li>
 <li>Refactored to use prototypical Inheritance.</li>
 <li>Replace local spotlight.js file with dbpedia-spotlight module.</li>
+<li>Implement location based filtering as proof of concept.</li>
+<li>Source code documentation - see /out directory.</li>
 </ul>
         </section>
 
         <aside id="sidebar">
-          <a href="https://github.com/ugochimbo/resa-lodsafe/zipball/master" class="button">
+          <a href="https://github.com/ugochimbo/xReSA/zipball/master" class="button">
             <small>Download</small>
             .zip file
           </a>
-          <a href="https://github.com/ugochimbo/resa-lodsafe/tarball/master" class="button">
+          <a href="https://github.com/ugochimbo/xReSA/tarball/master" class="button">
             <small>Download</small>
             .tar.gz file
           </a>
 
-          <p class="repo-owner"><a href="https://github.com/ugochimbo/resa-lodsafe"></a> is maintained by <a href="https://github.com/ugochimbo">ugochimbo</a>.</p>
+          <p class="repo-owner"><a href="https://github.com/ugochimbo/xReSA"></a> is maintained by <a href="https://github.com/ugochimbo">ugochimbo</a>.</p>
 
           <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
         </aside>
