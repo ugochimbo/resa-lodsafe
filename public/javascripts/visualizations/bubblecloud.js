@@ -17,6 +17,7 @@ function Bubblecloud() {
     var force;
     var nodes;
     var node;
+    var related_entities;
     var _this = this;
     
     var data_types_no = 20;
@@ -143,6 +144,7 @@ function Bubblecloud() {
                     d3.select("#bubblecloud svg").select('.node-circle[id="' + slug_text + '"]').attr('r', new_size / 2).transition().duration(700).attr('r', new_size);
                 }
             }
+            related_entities = data.related_entities;
         }
 
         this.restart();
@@ -152,20 +154,47 @@ function Bubblecloud() {
         d3.select("#bubblecloud svg").selectAll('g').remove();
     };
 
-    this.mouseover = function () {
+    function popover() {
         d3.select(this).select("circle")
             .style("stroke-width", 3);
         //d3.select(this).select("text").attr("opacity", 0.9);
-        var n_value=d3.select(this).select("text")[0][0].textContent;
-        var uri=d3.select(this).select("text")[0][0].__data__.uri;
+        var n_value = d3.select(this).select("text")[0][0].textContent;
+        var uri = d3.select(this).select("text")[0][0].__data__.uri;
         var desc = getResourceDescription(uri);
 
         $(d3.select(this).select("circle")).popover({
-            'title': '<b>'+n_value+'</b>',
-            'html':true,
-            'content': '<a href="'+uri+'">'+uri+'</a><div style="text-align:justify">'+desc+'</div>',
-            'container':'body'
+            'title': '<b>' + n_value + '</b>',
+            'html': true,
+            'content': '<a href="' + uri + '">' + uri + '</a><div style="text-align:justify">' + desc + '</div>',
+            'container': 'body'
         }).popover("show")
+    }
+
+    function popRelatedEntities(entity) {
+        console.log(related_entities);
+        if(related_entities[entity] !== undefined) {
+            nodes.forEach(function(o, i) {
+                if ($.inArray(o.name, related_entities[entity]) !== -1)
+                {
+                    console.log(o);
+                    setTimeout(popRelated(o), 2000);
+                }
+            });
+        }
+    }
+
+    function popRelated(obj) {
+        $('#' + obj.slug_text).popover({
+            'title': '<b>' + obj.name + ' (' +  obj.n_weight + ')' + '</b>',
+            'html': true,
+            'content': '<a href="' + obj.uri + '">' + obj.uri + '</a><div style="text-align:justify">' + getResourceDescription(obj.uri) + '</div>',
+            'container': 'body'
+        }).popover("show")
+    }
+
+    this.mouseover = function () {
+        popover.call(this);
+        popRelatedEntities(d3.select(this).select("text")[0][0].textContent);
     };
 
     this.mouseout = function() {
