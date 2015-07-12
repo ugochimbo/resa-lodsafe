@@ -26,12 +26,12 @@ $("#extensions-list").on( "change", function() {
 });
 
 function getResourceDescription(resourceUri){
-    var uriComponents = resourceUri.split('http://dbpedia.org/resource/');
+    var uriComponents = resourceUri.substr(resourceUri.lastIndexOf('/') + 1);
     var description='';
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: "http://lookup.dbpedia.org/api/search/PrefixSearch?MaxHits=1&QueryString="+uriComponents[1],
+        url: "http://lookup.dbpedia.org/api/search/PrefixSearch?MaxHits=1&QueryString="+uriComponents,
         async:false
     }).done(function( data ) {
         //console.log(data);
