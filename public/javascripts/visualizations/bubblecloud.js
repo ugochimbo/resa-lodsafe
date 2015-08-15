@@ -28,7 +28,7 @@ function Bubblecloud() {
     this.color = function(entity_type){
         if(entity_type=='Person'){
             return '#d1ebbc';
-        }else if(entity_type=='Place'){
+        }else if(entity_type=='Place' || entity_type=='Country' || entity_type=='City'){
             return '#b7d1e7';
         }else if(entity_type=='Organization'){
             return '#da808d';
@@ -49,7 +49,7 @@ function Bubblecloud() {
     this.foci_category = function(entity_type){
         if(entity_type == 'Person'){
             return this.foci[0];
-        }else if(entity_type == 'Place'){
+        }else if(entity_type=='Place' || entity_type=='Country' || entity_type=='City'){
             return this.foci[1];
         }else if(entity_type == 'Organization'){
             return this.foci[2];
