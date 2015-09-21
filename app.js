@@ -2,7 +2,6 @@
  * Module dependencies.
  */
 var express = require('express')
-    , io = require('socket.io')
     , http = require('http')
     , cronJob = require('cron').CronJob
     , _ = require('underscore')
@@ -14,12 +13,18 @@ var app = express();
 
 //Create the HTTP server with the express app as an argument
 var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+
 var default_port=5555;
 if(process.argv[2]){
     default_port = process.argv[2];
 }
+
 //Generic Express setup
 app.set('port', process.env.PORT || default_port);
+
+//server.listen(process.env.PORT || 3000);
+
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 /*
