@@ -29,6 +29,7 @@
     "twitter stream"
   ],
   "dependencies": {
+    "bower": "*",
     "body-parser": "^1.0.2",
     "cron": "*",
     "dbpedia-spotlight": "^0.5.27",
