@@ -60,10 +60,10 @@ var sockets = io.listen(server);
 //Set the sockets.io configuration.
 //THIS IS NECESSARY ONLY FOR HEROKU!
 
- sockets.configure(function() {
+ /*sockets.configure(function() {
  sockets.set('transports', ['xhr-polling']);
  sockets.set('polling duration', 10);
- });
+ });*/
 
 
 
