@@ -2,9 +2,6 @@
   "name": "resa-lodsafe",
   "version": "0.0.1",
   "private": true,
-  "scripts": {
-    "start": "node app.js"
-  },
   "contributors": [
     {
       "name": "Ugochukwu Chimbo Ejikeme",
@@ -52,6 +49,7 @@
     "gulp-notify": "^2.1.0"
   },
   "scripts": {
+    "start": "node app.js",
     "postinstall": "./node_modules/bower/bin/bower install"
   }
 }
