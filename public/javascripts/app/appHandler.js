@@ -93,7 +93,7 @@ function AppHandler() {
     this.updateTopPanelInfo = function (data, params) {
         if (params.symbols_no > params.max_ent) {
             this.pauseAnalyzing();
-            alert('The demo is limited to ' + max_ent + ' entities! contact us for more info: khalili@informatik.uni-leipzig.de');
+            alert('The demo is limited to ' + params.max_ent + ' entities! contact us for more info: khalili@informatik.uni-leipzig.de');
         }
 
         /*var avg_no = params.total / params.symbols_no;
